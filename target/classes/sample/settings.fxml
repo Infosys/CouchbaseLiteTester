@@ -43,7 +43,7 @@
                                                 <Button fx:id="chooseCert" mnemonicParsing="false" onAction="#certBox" text="Choose Certificate" HBox.hgrow="ALWAYS" />
                                              </children>
                                           </HBox>
-                                          <Button mnemonicParsing="false" text="Save" />
+                                          <Button fx:id="sgSave" mnemonicParsing="false" onAction="#sgSaveAction" text="Save" />
                                        </children>
                                     </VBox>
                                  </children></AnchorPane>

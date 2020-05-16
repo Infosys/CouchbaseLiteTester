@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class Controller {
+public class MainController {
     private static final Log logger = LogFactory.getLog(Main.class);
     @FXML
     private Button settingsButton;
