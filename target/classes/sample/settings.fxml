@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SettingsController">
+   <children>
+      <SplitPane dividerPositions="0.1708542713567839" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="67.0" prefWidth="598.0">
+               <children>
+                  <ComboBox fx:id="environment" layoutX="21.0" layoutY="27.0" onAction="#environmentAction" prefWidth="150.0" promptText="Environment" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="20.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <Accordion fx:id="settingsAccordion" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <panes>
+                      <TitledPane fx:id="sgPane" text="Sync Gateway Settings">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox layoutX="19.600000381469727" layoutY="19.600000381469727" spacing="15.0" AnchorPane.bottomAnchor="176.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+                                       <children>
+                                          <HBox prefHeight="65.0" prefWidth="577.0" spacing="5.0">
+                                             <children>
+                                                <ComboBox fx:id="sgScheme" prefHeight="25.0" prefWidth="90.0" promptText="Scheme" />
+                                                <TextField fx:id="sgURL" prefHeight="25.0" prefWidth="310.0" promptText="SG URL" />
+                                                <TextField fx:id="sgPort" prefHeight="25.0" prefWidth="52.0" promptText="port" />
+                                                <TextField fx:id="sgDB" prefHeight="25.0" prefWidth="117.0" promptText="SG DB Name" />
+                                             </children>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                             <children>
+                                                <TextField fx:id="sgCertText" prefHeight="25.0" prefWidth="397.0" promptText="SG Certificate" />
+                                                <Button fx:id="chooseCert" mnemonicParsing="false" onAction="#certBox" text="Choose Certificate" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                          <Button mnemonicParsing="false" text="Save" />
+                                       </children>
+                                    </VBox>
+                                 </children></AnchorPane>
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" expanded="false" text="untitled 2">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" expanded="false" text="untitled 3">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                    </panes>
+                  </Accordion>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
