@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -49,9 +50,25 @@
                                  </children></AnchorPane>
                         </content>
                       </TitledPane>
-                      <TitledPane animated="false" expanded="false" text="untitled 2">
+                      <TitledPane fx:id="cbLitePane" animated="false" expanded="false" text="CBLite Settings">
                         <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox prefHeight="251.0" prefWidth="596.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <HBox spacing="5.0">
+                                             <children>
+                                                <TextField fx:id="cbLitePath" prefHeight="25.0" prefWidth="457.0" promptText="CBLite DB Location" text="C:\couchbaselight" />
+                                                <Button mnemonicParsing="false" text="Choose CBLite DB" />
+                                             </children>
+                                          </HBox>
+                                          <Button fx:id="cbLiteSettingsSave" mnemonicParsing="false" onAction="#cbLiteSave" text="Save" />
+                                       </children>
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children></AnchorPane>
                         </content>
                       </TitledPane>
                       <TitledPane animated="false" expanded="false" text="untitled 3">

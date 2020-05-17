@@ -11,7 +11,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class SettingsController implements Initializable {
@@ -20,6 +23,9 @@ public class SettingsController implements Initializable {
     public TextField sgURL;
     public TextField sgPort;
     public TextField sgDB;
+    public TitledPane cbLitePane;
+    public Button cbLiteSettingsSave;
+    public TextField cbLitePath;
     @FXML
     private Button sgSave;
     public Button chooseCert;
@@ -69,9 +75,28 @@ public class SettingsController implements Initializable {
     }
     @FXML
     void sgSaveAction(ActionEvent event) {
-        String sgURLValue = sgScheme.getValue() + sgURL.getText();
+        String sgURLValue;
+        if (sgPort.getText().isBlank())
+            sgURLValue = sgScheme.getValue() + sgURL.getText() + "/" + sgDB.getText();
+        else
+            sgURLValue = sgScheme.getValue() + sgURL.getText() + ":" + sgPort.getText() + "/" + sgDB.getText();
         System.setProperty("sgURL",sgURLValue);
     }
+
+    @FXML
+    void cbLiteSave(ActionEvent event) {
+//        TODO first read the file here and update it.
+        Properties properties = new Properties();
+        properties.setProperty("cblite-loc",cbLitePath.getText());
+        try {
+            File configFile = new File("config.xml");
+            FileOutputStream out = new FileOutputStream(configFile);
+            properties.storeToXML(out,"Configuration");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         environment.setItems(FXCollections.observableArrayList("Dev","QA","Perf","POC"));
