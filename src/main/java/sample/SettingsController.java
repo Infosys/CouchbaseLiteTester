@@ -10,9 +10,7 @@ import javafx.stage.FileChooser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -26,6 +24,7 @@ public class SettingsController implements Initializable {
     public TitledPane cbLitePane;
     public Button cbLiteSettingsSave;
     public TextField cbLitePath;
+    public Label sgSettingsErrLabel;
     @FXML
     private Button sgSave;
     public Button chooseCert;
@@ -37,9 +36,11 @@ public class SettingsController implements Initializable {
     private TitledPane sgPane;
     @FXML
     private TextField sgCertText;
+    Properties properties = new Properties();
+
     @FXML
     void environmentAction(ActionEvent event) {
-        switch (environment.getValue()){
+        switch (environment.getValue()) {
             case "QA":
                 sgURL.setText("peplap04997.corp.pep.pvt");
                 sgPort.setText("4984");
@@ -67,40 +68,60 @@ public class SettingsController implements Initializable {
                 break;
         }
     }
+
     @FXML
     void certBox(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         File cert = fileChooser.showOpenDialog(sgPane.getScene().getWindow());
         sgCertText.setText(cert.getPath());
     }
+
     @FXML
     void sgSaveAction(ActionEvent event) {
         String sgURLValue;
+        sgSettingsErrLabel.setText("");
         if (sgPort.getText().isBlank())
             sgURLValue = sgScheme.getValue() + sgURL.getText() + "/" + sgDB.getText();
         else
             sgURLValue = sgScheme.getValue() + sgURL.getText() + ":" + sgPort.getText() + "/" + sgDB.getText();
-        System.setProperty("sgURL",sgURLValue);
+        properties.setProperty("sgURL", sgURLValue);
+        if (sgScheme.getValue().toString().contains("wss")) {
+            if (sgCertText.getText().isBlank()) {
+                sgSettingsErrLabel.setText("Certificate is required for wss scheme");
+            } else {
+                properties.setProperty("sgCert",sgCertText.getText());
+            }
+        }
+        try {
+            FileOutputStream out = new FileOutputStream("config.xml");
+            properties.storeToXML(out, "Configuration");
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.error("Error writing config file", e);
+        }
     }
 
     @FXML
     void cbLiteSave(ActionEvent event) {
-//        TODO first read the file here and update it.
-        Properties properties = new Properties();
-        properties.setProperty("cblite-loc",cbLitePath.getText());
+        properties.setProperty("cblite-loc", cbLitePath.getText());
         try {
-            File configFile = new File("config.xml");
-            FileOutputStream out = new FileOutputStream(configFile);
-            properties.storeToXML(out,"Configuration");
+            FileOutputStream out = new FileOutputStream("config.xml");
+            properties.storeToXML(out, "Configuration");
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("Error writing config file", e);
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        environment.setItems(FXCollections.observableArrayList("Dev","QA","Perf","POC"));
+        environment.setItems(FXCollections.observableArrayList("Dev", "QA", "Perf", "POC"));
         settingsAccordion.setExpandedPane(sgPane);
-        sgScheme.setItems(FXCollections.observableArrayList("ws://","wss://"));
+        sgScheme.setItems(FXCollections.observableArrayList("ws://", "wss://"));
+        try {
+            properties.loadFromXML(new FileInputStream("config.xml"));
+        } catch (IOException e) {
+            logger.error("Error reading config file", e);
+        }
     }
 }

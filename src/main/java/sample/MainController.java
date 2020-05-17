@@ -38,7 +38,7 @@ public class MainController implements Initializable {
             stage.setScene(new Scene(settingRoot));
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error loading settings.fxml",e);
         }
     }
 
@@ -53,6 +53,8 @@ public class MainController implements Initializable {
             in = new FileInputStream("config.xml");
             properties.loadFromXML(in);
             logger.info("Author :" + properties.getProperty("author"));
+            logger.info("sgURL: " + properties.getProperty("sgURL"));
+            logger.info("cblite-loc: " + properties.getProperty("cblite-loc"));
         } catch (IOException e) {
             logger.error("IO Exception on config file", e);
             setupProperties();
@@ -60,7 +62,7 @@ public class MainController implements Initializable {
     }
 
     private void setupProperties() {
-        logger.info("Bad properties file, reloading defaults");
+        logger.error("Bad properties file, reloading defaults");
         try {
             File configFile = new File("config.xml");
             FileOutputStream out = new FileOutputStream(configFile);
@@ -74,5 +76,7 @@ public class MainController implements Initializable {
     private void setDefaultProperties() {
         properties.setProperty("cblite-loc", "C:\\couchbaselight/resources");
         properties.setProperty("author", "amrishraje@gmail.com");
+        properties.setProperty("sgURL", "ws://peplap04996.corp.pep.pvt:4984/syncdb");
+        properties.setProperty("sgCert","none");
     }
 }
