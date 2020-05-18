@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020.  amrishraje@gmail.com
+ */
+
 package sample;
 
 import com.couchbase.lite.CouchbaseLiteException;
