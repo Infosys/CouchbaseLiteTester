@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -56,20 +58,25 @@
          <children>
             <AnchorPane prefHeight="575.0" prefWidth="250.0" style="-fx-background-color: #555555;">
                <children>
-                  <TextField layoutX="39.0" layoutY="53.0" prefHeight="25.0" prefWidth="200.0" promptText="User" AnchorPane.leftAnchor="20.0" />
-                  <TextField layoutX="38.0" layoutY="106.0" prefWidth="200.0" promptText="Password" AnchorPane.leftAnchor="20.0" />
-                  <Button layoutX="50.0" layoutY="152.0" mnemonicParsing="false" prefWidth="200.0" text="Sync" AnchorPane.leftAnchor="20.0" />
-                  <Button layoutX="33.0" layoutY="201.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Initialize" AnchorPane.leftAnchor="20.0" />
-                  <Button layoutX="135.0" layoutY="203.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Delete" AnchorPane.rightAnchor="33.0" />
+                  <TextField fx:id="userText" layoutX="39.0" layoutY="53.0" onAction="#startSync" prefHeight="25.0" prefWidth="200.0" promptText="User" AnchorPane.leftAnchor="20.0" />
+                  <PasswordField fx:id="pwdText" layoutX="38.0" layoutY="106.0" onAction="#startSync" prefWidth="200.0" promptText="Password" AnchorPane.leftAnchor="20.0" />
+                  <Button fx:id="syncButton" layoutX="50.0" layoutY="152.0" mnemonicParsing="false" onAction="#startSync" prefWidth="200.0" text="Sync" AnchorPane.leftAnchor="20.0">
+                     <tooltip>
+                        <Tooltip text="Sync with Sync Gateway" />
+                     </tooltip></Button>
+                  <Button fx:id="initSync" layoutX="33.0" layoutY="201.0" mnemonicParsing="false" onAction="#initSync" prefHeight="25.0" prefWidth="90.0" text="Initialize" AnchorPane.leftAnchor="20.0">
+                     <tooltip>
+                        <Tooltip text="Initialize DB and sync" />
+                     </tooltip></Button>
+                  <Button fx:id="deleteSync" layoutX="135.0" layoutY="203.0" mnemonicParsing="false" onAction="#deleteDB" prefHeight="25.0" prefWidth="90.0" text="Delete" AnchorPane.rightAnchor="33.0">
+                     <tooltip>
+                        <Tooltip text="Delete local CBLite DB file" />
+                     </tooltip></Button>
                   <Button fx:id="settingsButton" layoutX="84.0" layoutY="536.0" mnemonicParsing="false" onAction="#openSettings" text="Settings" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Label fx:id="statusLabel" layoutX="20.0" layoutY="247.0" maxWidth="300.0" prefHeight="86.0" prefWidth="200.0" textFill="WHITE" wrapText="true" />
                </children>
             </AnchorPane>
-            <TableView layoutX="251.0" layoutY="82.0" prefHeight="575.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <columns>
-                <TableColumn prefWidth="200.0" text="Document Id" />
-                <TableColumn prefWidth="450.0" text="Value" />
-              </columns>
-            </TableView>
+            <TableView fx:id="dataTable" layoutX="251.0" layoutY="82.0" prefHeight="575.0" prefWidth="625.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
     </AnchorPane>
   </children>

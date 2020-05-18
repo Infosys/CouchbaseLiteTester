@@ -55,7 +55,7 @@ public class SettingsController implements Initializable {
                 break;
             case "POC":
                 sgURL.setText("52.153.112.176");
-                sgPort.setText("4984");
+                sgPort.setText("443");
                 sgDB.setText("syncdb");
                 sgScheme.setValue("wss://");
                 break;

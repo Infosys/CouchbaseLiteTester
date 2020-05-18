@@ -2,7 +2,8 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>Configuration</comment>
+<entry key="sgCert">C:\Users\09270742\Desktop\certificate.crt</entry>
 <entry key="author">amrishraje@gmail.com</entry>
-<entry key="cblite-loc">C:\couchbaselight/resources</entry>
-<entry key="sgURL">wss://52.153.112.176:4984/syncdb</entry>
+<entry key="cblite-loc">C:\couchbaselight</entry>
+<entry key="sgURL">wss://52.153.112.176:443/syncdb</entry>
 </properties>
