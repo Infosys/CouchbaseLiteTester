@@ -5,6 +5,7 @@
 package sample;
 
 import com.couchbase.lite.*;
+import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,7 +66,7 @@ public class InitiateSync {
         return isReplError;
     }
 
-    public static void startReplicator(String user, String pwd) throws URISyntaxException, CouchbaseLiteException {
+    public static void startReplicator(String user, String pwd, boolean isContinuous) throws URISyntaxException, CouchbaseLiteException {
         logger.info("calling startReplicator");
         if (database == null) createLocalCBLiteFile();
         loadProperties();
@@ -97,6 +98,9 @@ public class InitiateSync {
                 }
             }
             replConfig.setPinnedServerCertificate(cert);
+//            TODO set continuous mode here
+            if (isContinuous) replConfig.setContinuous(true);
+            else replConfig.setContinuous(false);
         }
 //end cert pinning
         // Add authentication.
@@ -110,29 +114,27 @@ public class InitiateSync {
             if (change.getStatus().getError() != null) {
                 logger.error("Error replicating from Sync GW, error:  " + change.getStatus().getError().getMessage()
                         + " " + change.getStatus().getError().getCode());
-                isReplError = true;
-                replErrorMsg = change.getStatus().getError().getMessage();
-            }else {
-                isReplError = false;
-                replErrorMsg = "";
             }
-            if (change.getStatus().getActivityLevel() == Replicator.ActivityLevel.STOPPED) {
-                logger.info("Replication Stopped");
-            }
+            logger.debug("Replication Status: " + change.getStatus());
         });
 
         // Start replication.
         replicator.start();
         isReplStarted = true;
-        while (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.STOPPED) {
-            try {
-                Thread.sleep(1000);
-                totalDocsToReplicate = replicator.getStatus().getProgress().getTotal();
-                docsReplicated = replicator.getStatus().getProgress().getCompleted();
-            } catch (InterruptedException ex) {
-                logger.error("replicator getStatus failed", ex);
-            }
-        }
+//        Todo in continuous mode, this cannot be blocking
+//        while (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.STOPPED) {
+//            try {
+//                Thread.sleep(1000);
+//                totalDocsToReplicate = replicator.getStatus().getProgress().getTotal();
+//                docsReplicated = replicator.getStatus().getProgress().getCompleted();
+//            } catch (InterruptedException ex) {
+//                logger.error("replicator getStatus failed", ex);
+//            }
+//        }
+    }
+
+    public static String getSyncStatus(){
+        return replicator.getStatus().getActivityLevel().toString();
     }
 
     public static void onDemandSync() {

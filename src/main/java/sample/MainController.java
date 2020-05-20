@@ -4,7 +4,9 @@
 
 package sample;
 
+import com.couchbase.lite.AbstractReplicator;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Replicator;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +19,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.commons.logging.Log;
@@ -34,13 +39,17 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
-    private static final Log logger = LogFactory.getLog(Main.class);
+    private static final Log logger = LogFactory.getLog(MainController.class);
     public Button syncButton;
     public TextField userText;
     public PasswordField pwdText;
     public Label statusLabel;
     public Button deleteSync;
     public TableView dataTable;
+    public TableColumn<Map.Entry<String, String>, String> docId;
+    public TableColumn<Map.Entry<String, String>, String> docValue;
+    public SwitchButton continuousToggle;
+    public Button initSync;
     @FXML
     private Button settingsButton;
     @FXML
@@ -87,35 +96,21 @@ public class MainController implements Initializable {
         user = localUser;
         try {
             if (!InitiateSync.isReplStarted) {
-                InitiateSync.startReplicator(localUser, pwd);
-                statusLabel.setText("Synced " + InitiateSync.totalDocsToReplicate + " documents");
+                InitiateSync.startReplicator(localUser, pwd, continuousToggle.isContinuous());
+                statusLabel.setText("Syncing...");
                 if (InitiateSync.isIsReplError()) {
                     statusLabel.setText("Error syncing data: " + InitiateSync.getReplErrorMsg());
                 }
+//                TODO populate table should be done after sync is stopped based on a change listener
                 populateTable();
-//                TODO fix cleanUpLabel to be non blocking
-//                cleanUpLabel();
             } else {
                 InitiateSync.onDemandSync();
+//                TODO populate table should be done after sync is stopped based on a change listener
                 populateTable();
             }
         } catch (URISyntaxException | CouchbaseLiteException e) {
             logger.info(" Error is" + e.getMessage());
         }
-    }
-
-    private void cleanUpLabel() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    logger.info("Can't clean up label");
-                }
-                statusLabel.setText("");
-            }
-        });
     }
 
     @Override
@@ -126,48 +121,68 @@ public class MainController implements Initializable {
         } catch (CouchbaseLiteException ex) {
             logger.error(" Error is :" + ex.getMessage());
         }
-//        Test table population
+//        Populate Table
         try {
             populateTable();
         } catch (CouchbaseLiteException e) {
             logger.error("Error populating table from CBLite DB", e);
         }
-
     }
+
 
     private void populateTable() throws CouchbaseLiteException {
 
         cbLiteDataMap = (InitiateSync.getDatabase() == null) ? new HashMap<>() : InitiateSync.getCBLiteData();
-//        if (InitiateSync.getDatabase() == null)
-//            cbLiteDataMap = new HashMap<String, String>();
-//        else
-//            cbLiteDataMap = InitiateSync.getCBLiteData();
-        TableColumn<Map.Entry<String, String>, String> column1 = new TableColumn<>("Key");
-        column1.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
+        docId = new TableColumn<>("Key");
+        docId.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
-                // this callback returns property for just one cell, you can't use a loop here
-                // for first column we use key
                 return new SimpleStringProperty(p.getValue().getKey());
             }
         });
 
-        TableColumn<Map.Entry<String, String>, String> column2 = new TableColumn<>("Value");
-        column2.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
+//        TableColumn<Map.Entry<String, String>, String> docValue = new TableColumn<>("Value");
+        docValue = new TableColumn<>("Value");
+        docValue.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
-                // for second column we use value
                 return new SimpleStringProperty(p.getValue().getValue());
             }
         });
 
         ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
-        dataTable.getColumns().setAll(column1, column2);
-        column1.setEditable(false);
+        dataTable.getColumns().setAll(docId, docValue);
+        docId.setEditable(false);
 //        dataTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        column1.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(1)); //w*1/4
-        column2.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(3)); //w*3/4
+        docId.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(1)); //w*1/4
+        docValue.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(3)); //w*3/4
         dataTable.setItems(items);
+//        ------- Set click on table
+        dataTable.setRowFactory(tv -> {
+            TableRow<Map.Entry<String, String>> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty()) {
+                    Map.Entry<String, String> dataValue = row.getItem();
+                    showDataPopup(dataValue.getKey(), dataValue.getValue());
+                }
+            });
+            return row;
+        });
+    }
+
+    private void showDataPopup(String key, String value) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("tableDataPopup.fxml"));
+            Parent dataRoot = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Data Viewer");
+            stage.setScene(new Scene(dataRoot,800,500));
+            DataPopupController dataPopupController = fxmlLoader.getController();
+            dataPopupController.loadDataTextArea(value);
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error loading tableDataPopup.fxml", e);
+        }
     }
 
     private void readProperties() {
