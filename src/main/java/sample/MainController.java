@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class MainController implements Initializable {
     private static final Log logger = LogFactory.getLog(MainController.class);
@@ -50,6 +51,7 @@ public class MainController implements Initializable {
     public TableColumn<Map.Entry<String, String>, String> docValue;
     public SwitchButton continuousToggle;
     public Button initSync;
+    public Button reloadTable;
     @FXML
     private Button settingsButton;
     @FXML
@@ -60,6 +62,7 @@ public class MainController implements Initializable {
     private Map<String, String> cbLiteDataMap;
     private String user = "";
     private String pwd;
+    DBSync dbSync = new DBSync();
 
     public MainController() {
         cbLiteDataMap = new HashMap<>();
@@ -130,6 +133,7 @@ public class MainController implements Initializable {
     }
 
 
+    @FXML
     private void populateTable() throws CouchbaseLiteException {
 
         cbLiteDataMap = (InitiateSync.getDatabase() == null) ? new HashMap<>() : InitiateSync.getCBLiteData();

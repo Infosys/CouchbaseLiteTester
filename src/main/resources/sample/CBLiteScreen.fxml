@@ -2,15 +2,10 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
@@ -18,56 +13,17 @@
 <!--
   ~ Copyright (c) 2020.  amrishraje@gmail.com
   -->
-
 <?import sample.SwitchButton?>
+
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
   <children>
-    <MenuBar VBox.vgrow="NEVER">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <AnchorPane prefHeight="575.0" prefWidth="250.0" style="-fx-background-color: #555555;">
+            <AnchorPane prefHeight="575.0" prefWidth="250.0" style="-fx-background-color: #555555;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <TextField fx:id="userText" layoutX="39.0" layoutY="53.0" onAction="#startSync" prefHeight="25.0" prefWidth="200.0" promptText="User" AnchorPane.leftAnchor="20.0" />
-                  <PasswordField fx:id="pwdText" layoutX="38.0" layoutY="106.0" onAction="#startSync" prefWidth="200.0" promptText="Password" AnchorPane.leftAnchor="20.0" />
-                  <Button fx:id="syncButton" layoutX="50.0" layoutY="152.0" mnemonicParsing="false" onAction="#startSync" prefWidth="200.0" text="Sync" AnchorPane.leftAnchor="20.0">
+                  <TextField fx:id="userText" layoutX="39.0" layoutY="53.0" onAction="#startSync" prefHeight="25.0" prefWidth="200.0" promptText="User" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                  <PasswordField fx:id="pwdText" layoutX="38.0" layoutY="106.0" onAction="#startSync" prefWidth="200.0" promptText="Password" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                  <Button fx:id="syncButton" layoutX="50.0" layoutY="152.0" mnemonicParsing="false" onAction="#startSync" prefWidth="200.0" text="Sync" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                      <tooltip>
                         <Tooltip text="Sync with Sync Gateway" />
                      </tooltip></Button>
@@ -80,9 +36,10 @@
                      <tooltip>
                         <Tooltip text="Delete local CBLite DB file" />
                      </tooltip></Button>
-                  <Button fx:id="settingsButton" layoutX="84.0" layoutY="536.0" mnemonicParsing="false" onAction="#openSettings" text="Settings" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button fx:id="settingsButton" layoutX="84.0" layoutY="536.0" mnemonicParsing="false" onAction="#openSettings" text="Settings" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                   <Label fx:id="statusLabel" layoutX="20.0" layoutY="281.0" maxWidth="300.0" prefHeight="86.0" prefWidth="200.0" textFill="WHITE" wrapText="true" />
                   <Label layoutX="22.0" layoutY="200.0" text="Continuous Sync" textFill="WHITE" />
+                  <Button fx:id="reloadTable" layoutX="4.0" layoutY="494.0" mnemonicParsing="false" onAction="#populateTable" text="Reload Table" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                </children>
             </AnchorPane>
             <TableView fx:id="dataTable" layoutX="251.0" layoutY="82.0" prefHeight="575.0" prefWidth="625.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

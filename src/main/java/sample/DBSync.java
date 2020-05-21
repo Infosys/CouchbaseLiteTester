@@ -5,8 +5,6 @@
 package sample;
 
 import com.couchbase.lite.*;
-import javafx.fxml.FXMLLoader;
-import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,13 +19,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Consumer;
 
-public class InitiateSync {
-    private static final Log logger = LogFactory.getLog(InitiateSync.class);
+public class DBSync {
+    private final Log logger = LogFactory.getLog(DBSync.class);
     static Properties properties;
 
-    static {
+    public DBSync() {
         try {
             properties = new Properties();
             properties.loadFromXML(new FileInputStream("config.xml"));
@@ -36,39 +33,35 @@ public class InitiateSync {
         }
     }
 
-    private static String SYNC_GATEWAY_URL = properties.getProperty("sgURL");
-    private static final String DB_NAME = properties.getProperty("liteDBName", "syncdb");
-    public static final String DB_PATH = properties.getProperty("cblite-loc");
-    private static String DB_PASS = properties.getProperty("dbpass", "password");
+    private  String SYNC_GATEWAY_URL = properties.getProperty("sgURL");
+    private  final String DB_NAME = properties.getProperty("liteDBName", "syncdb");
+    public  final String DB_PATH = properties.getProperty("cblite-loc");
+    private  String DB_PASS = properties.getProperty("dbpass", "password");
 
-    public static Database getDatabase() {
+    public  Database getDatabase() {
         return database;
     }
 
-    private static Database database;
-    private static Replicator replicator;
-    private static String replErrorMsg;
-    public static boolean isReplStarted = false;
-    public static boolean isReplError = false;
-    public static long docsReplicated = 0;
-    public static long totalDocsToReplicate = 0;
+    private  Database database;
+    private  Replicator replicator;
+    private  String replErrorMsg;
+    public  boolean isReplStarted = false;
+    public  boolean isReplError = false;
+    public  long docsReplicated = 0;
+    public  long totalDocsToReplicate = 0;
 
 
-    public static void createLocalCBLiteFile() throws CouchbaseLiteException {
+    public void createLocalCBLiteFile() throws CouchbaseLiteException {
         // Initialize Couchbase Lite
         CouchbaseLite.init();
         // Get the database (and create it if it doesn't exist).
         DatabaseConfiguration config = new DatabaseConfiguration();
         config.setDirectory(DB_PATH);
-        InitiateSync.database = new Database(DB_NAME, config);
+        database = new Database(DB_NAME, config);
         logger.info("CbLite file has been created and database has been initialized");
     }
 
-    public static boolean isIsReplError() {
-        return isReplError;
-    }
-
-    public static void startReplicator(String user, String pwd, boolean isContinuous) throws URISyntaxException, CouchbaseLiteException {
+    public void startReplicator(String user, String pwd, boolean isContinuous) throws URISyntaxException, CouchbaseLiteException {
         logger.info("calling startReplicator");
         if (database == null) createLocalCBLiteFile();
         loadProperties();
@@ -136,11 +129,11 @@ public class InitiateSync {
 //        }
     }
 
-    public static String getSyncStatus(){
+    public String getSyncStatus(){
         return replicator.getStatus().getActivityLevel().toString();
     }
 
-    public static void onDemandSync() {
+    public void onDemandSync() {
         logger.info(" starting onDemandSync");
         replicator.start();
         while (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.STOPPED) {
@@ -153,7 +146,7 @@ public class InitiateSync {
         }
     }
 
-    public static void stopReplication() {
+    public void stopReplication() {
         logger.info("Stopping replication");
         if (replicator != null) {
             replicator.stop();
@@ -161,7 +154,7 @@ public class InitiateSync {
         }
     }
 
-    public static void stopAndDeleteDB() {
+    public void stopAndDeleteDB() {
         logger.info("- Deleting the local cblite DB");
         if (database != null) {
             try {
@@ -178,7 +171,7 @@ public class InitiateSync {
         }
     }
 
-    public static HashMap getCBLiteData() throws CouchbaseLiteException {
+    public HashMap getCBLiteData() throws CouchbaseLiteException {
         HashMap<String, String> cbData = new HashMap<>(10);
         Query queryAll = QueryBuilder.select(SelectResult.all(),
                 SelectResult.expression(Meta.id))
@@ -199,16 +192,12 @@ public class InitiateSync {
 
     //    public static void main(String[] args) throws CouchbaseLiteException, InterruptedException, URISyntaxException {
 //    }
-    private static void loadProperties() {
+    private void loadProperties() {
         try {
 //            properties = new Properties();
             properties.loadFromXML(new FileInputStream("config.xml"));
         } catch (IOException e) {
             logger.error("Error in static block", e);
         }
-    }
-
-    public static String getReplErrorMsg() {
-        return replErrorMsg;
     }
 }

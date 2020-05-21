@@ -5,10 +5,14 @@
 package sample;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,18 +39,14 @@ public class DataPopupController {
     void searchHandler(ActionEvent event) {
         if (searchField.getText() != null && !searchField.getText().isEmpty()) {
             holdSrchTxtx = searchField.getText();
-            logger.info("hold text" + holdSrchTxtx);
             if (!holdSrchTxtx.equals(searchField.getText())) fromIndex = 0;
-            logger.info("from Index" + fromIndex);
             int index = dataTextArea.getText().toLowerCase().indexOf(searchField.getText(), fromIndex);
-            logger.info("Index" + index);
 //            TODO fix wrap around search
             if (index == -1) {
                 if (fromIndex > 0) {
 //                  string was previously found, so wrap around and search
                     fromIndex = 0;
                     index = dataTextArea.getText().toLowerCase().indexOf(searchField.getText(), fromIndex);
-                    logger.info("Index inside not found" + index);
                     highlightSearchText(index);
                 }
             } else {
@@ -60,4 +60,6 @@ public class DataPopupController {
         dataTextArea.selectRange(index, index + searchField.getLength());
         dataTextArea.setStyle("-fx-highlight-fill: lightgray; -fx-highlight-text-fill: firebrick;");
     }
+
+
 }
