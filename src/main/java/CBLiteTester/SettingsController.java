@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,6 +29,7 @@ public class SettingsController implements Initializable {
     public Button cbLiteSettingsSave;
     public TextField cbLitePath;
     public Label sgSettingsErrLabel;
+    public Button cancelButton;
     @FXML
     private Button sgSave;
     public Button chooseCert;
@@ -117,6 +119,11 @@ public class SettingsController implements Initializable {
         }
     }
 
+    @FXML
+    void cancelAction(ActionEvent event) {
+        Stage stage = (Stage) cancelButton.getScene().getWindow();
+        stage.close();
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         environment.setItems(FXCollections.observableArrayList("Dev", "QA", "Perf", "POC"));

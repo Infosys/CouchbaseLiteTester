@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-public class InitiateSync {
-    private static final Log logger = LogFactory.getLog(InitiateSync.class);
+public class SyncController {
+    private static final Log logger = LogFactory.getLog(SyncController.class);
     private static Properties properties;
     static {
         try {
@@ -52,7 +52,7 @@ public class InitiateSync {
         DatabaseConfiguration config = new DatabaseConfiguration();
         config.setDirectory(DB_PATH);
         try {
-            InitiateSync.database = new Database(DB_NAME, config);
+            SyncController.database = new Database(DB_NAME, config);
         } catch (CouchbaseLiteException e) {
             logger.info("Unable to create CBLite DB", e);
         }
@@ -97,7 +97,6 @@ public class InitiateSync {
                 }
             }
             replicatorConfig.setPinnedServerCertificate(cert);
-//            TODO set continuous mode here
             if (isContinuous) replicatorConfig.setContinuous(true);
             else replicatorConfig.setContinuous(false);
         }

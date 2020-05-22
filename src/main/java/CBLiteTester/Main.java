@@ -20,7 +20,7 @@ public class Main extends Application {
     private static final Log logger = LogFactory.getLog(Main.class);
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        Parent root = FXMLLoader.load(getClass().getResource("settings.fxml"));
+//        Parent root = FXMLLoader.load(getClass().getResource("Settings.fxml"));
         Parent root = FXMLLoader.load(getClass().getResource("CBLiteScreen.fxml"));
         primaryStage.setTitle("Couchbase Lite Sync");
         primaryStage.setScene(new Scene(root, 900, 600));
@@ -28,7 +28,7 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
-                InitiateSync.stopReplication();
+                SyncController.stopReplication();
                 Platform.exit();
                 System.exit(0);
             }

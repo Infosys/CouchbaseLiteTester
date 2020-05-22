@@ -23,7 +23,7 @@
          <children>
             <AnchorPane prefHeight="45.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label text="Document Id" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="10.0">
+                  <Label fx:id="docIdLabel" text="Document Id" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="10.0">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -38,7 +38,7 @@
                <children>
                   <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="15.0">
                     <buttons>
-                      <Button cancelButton="true" mnemonicParsing="false" text="Cancel" />
+                      <Button fx:id="editCancelButton" cancelButton="true" mnemonicParsing="false" onAction="#cancelEdit" text="Cancel" />
                         <Button defaultButton="true" mnemonicParsing="false" text="Save" />
                     </buttons>
                   </ButtonBar>

@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.commons.logging.Log;
@@ -25,7 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +45,7 @@ public class MainController implements Initializable {
     public SwitchButton continuousToggle;
     public Button initSync;
     public Button reloadTable;
+    public Button stopSync;
     @FXML
     private Button settingsButton;
     @FXML
@@ -63,14 +64,14 @@ public class MainController implements Initializable {
     @FXML
     void openSettings(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("settings.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Settings.fxml"));
             Parent settingRoot = (Parent) fxmlLoader.load();
             Stage stage = new Stage();
             stage.setTitle("Settings");
             stage.setScene(new Scene(settingRoot));
             stage.show();
         } catch (Exception e) {
-            logger.error("Error loading settings.fxml", e);
+            logger.error("Error loading Settings.fxml", e);
         }
     }
 
@@ -89,15 +90,15 @@ public class MainController implements Initializable {
             return;
         }
         user = localUser;
-        if (!InitiateSync.isReplicatorStarted) {
-            InitiateSync.startReplicator(localUser, pwd, continuousToggle.isContinuous(),this);
+        if (!SyncController.isReplicatorStarted) {
+            SyncController.startReplicator(localUser, pwd, continuousToggle.isContinuous(),this);
 //                if (InitiateSync.isIsReplError()) {
 //                    statusLabel.setText("Error syncing data: " + InitiateSync.getReplErrorMsg());
 //                }
 ////                TODO populate table should be done after sync is stopped based on a change listener
 //                populateTable();
         } else {
-            InitiateSync.onDemandSync();
+            SyncController.onDemandSync();
 //                TODO populate table should be done after sync is stopped based on a change listener
             populateTable();
         }
@@ -106,7 +107,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         readProperties();
-        InitiateSync.createLocalCBLiteFile();
+        SyncController.createLocalCBLiteFile();
         populateTable();
     }
 
@@ -115,7 +116,7 @@ public class MainController implements Initializable {
     public void populateTable() {
 
         try {
-            cbLiteDataMap = (InitiateSync.getDatabase() == null) ? new HashMap<>() : InitiateSync.getCBLiteData();
+            cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData();
         } catch (CouchbaseLiteException e) {
             logger.info("Unable to read CBLite DB",e);
         }
@@ -162,7 +163,7 @@ public class MainController implements Initializable {
             stage.setTitle("Data Viewer");
             stage.setScene(new Scene(dataRoot,800,500));
             DataPopupController dataPopupController = fxmlLoader.getController();
-            dataPopupController.loadDataTextArea(value);
+            dataPopupController.loadDataTextArea(key, value);
             stage.show();
         } catch (Exception e) {
             logger.error("Error loading tableDataPopup.fxml", e);
@@ -202,16 +203,30 @@ public class MainController implements Initializable {
     }
 
     public void deleteDB(ActionEvent actionEvent) {
-        InitiateSync.stopAndDeleteDB();
+        SyncController.stopAndDeleteDB();
         statusLabel.setText("CBLite DB Deleted");
         populateTable();
     }
 
     public void initSync(ActionEvent actionEvent) {
-        InitiateSync.stopAndDeleteDB();
-        InitiateSync.createLocalCBLiteFile();
+        SyncController.stopAndDeleteDB();
+        SyncController.createLocalCBLiteFile();
         user = "";
         statusLabel.setText("Initialization Complete, you may sync again");
         populateTable();
+    }
+
+    @FXML
+    void toggleContinuousMode(MouseEvent event) {
+        if (continuousToggle.isContinuous()){
+            stopSync.setDisable(false);
+        }else {
+            stopSync.setDisable(true);
+        }
+    }
+
+    @FXML
+    void stopContinuousSync(ActionEvent event) {
+        SyncController.stopReplication();
     }
 }

@@ -23,6 +23,7 @@
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="67.0" prefWidth="598.0">
                <children>
                   <ComboBox fx:id="environment" layoutX="21.0" layoutY="27.0" onAction="#environmentAction" prefWidth="150.0" promptText="Environment" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="20.0" />
+                  <Button fx:id="cancelButton" cancelButton="true" layoutX="546.0" layoutY="8.0" maxHeight="1.0" maxWidth="1.0" minHeight="1.0" minWidth="1.0" mnemonicParsing="false" onAction="#cancelAction" opacity="0.0" text="Cancel" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
