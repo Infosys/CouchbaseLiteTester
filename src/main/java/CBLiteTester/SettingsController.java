@@ -2,14 +2,13 @@
  * Copyright (c) 2020.  amrishraje@gmail.com
  */
 
-package sample;
+package CBLiteTester;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -89,6 +88,7 @@ public class SettingsController implements Initializable {
         else
             sgURLValue = sgScheme.getValue() + sgURL.getText() + ":" + sgPort.getText() + "/" + sgDB.getText();
         properties.setProperty("sgURL", sgURLValue);
+        properties.setProperty("sgDB", sgDB.getText());
         if (sgScheme.getValue().toString().contains("wss")) {
             if (sgCertText.getText().isBlank()) {
                 sgSettingsErrLabel.setText("Certificate is required for wss scheme");

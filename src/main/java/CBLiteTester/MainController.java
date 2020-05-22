@@ -2,12 +2,9 @@
  * Copyright (c) 2020.  amrishraje@gmail.com
  */
 
-package sample;
+package CBLiteTester;
 
-import com.couchbase.lite.AbstractReplicator;
 import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Replicator;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -19,9 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.commons.logging.Log;
@@ -37,7 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class MainController implements Initializable {
     private static final Log logger = LogFactory.getLog(MainController.class);
@@ -62,7 +55,6 @@ public class MainController implements Initializable {
     private Map<String, String> cbLiteDataMap;
     private String user = "";
     private String pwd;
-    DBSync dbSync = new DBSync();
 
     public MainController() {
         cbLiteDataMap = new HashMap<>();
@@ -97,46 +89,36 @@ public class MainController implements Initializable {
             return;
         }
         user = localUser;
-        try {
-            if (!InitiateSync.isReplStarted) {
-                InitiateSync.startReplicator(localUser, pwd, continuousToggle.isContinuous());
-                statusLabel.setText("Syncing...");
-                if (InitiateSync.isIsReplError()) {
-                    statusLabel.setText("Error syncing data: " + InitiateSync.getReplErrorMsg());
-                }
+        if (!InitiateSync.isReplicatorStarted) {
+            InitiateSync.startReplicator(localUser, pwd, continuousToggle.isContinuous(),this);
+//                if (InitiateSync.isIsReplError()) {
+//                    statusLabel.setText("Error syncing data: " + InitiateSync.getReplErrorMsg());
+//                }
+////                TODO populate table should be done after sync is stopped based on a change listener
+//                populateTable();
+        } else {
+            InitiateSync.onDemandSync();
 //                TODO populate table should be done after sync is stopped based on a change listener
-                populateTable();
-            } else {
-                InitiateSync.onDemandSync();
-//                TODO populate table should be done after sync is stopped based on a change listener
-                populateTable();
-            }
-        } catch (URISyntaxException | CouchbaseLiteException e) {
-            logger.info(" Error is" + e.getMessage());
+            populateTable();
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         readProperties();
-        try {
-            InitiateSync.createLocalCBLiteFile();
-        } catch (CouchbaseLiteException ex) {
-            logger.error(" Error is :" + ex.getMessage());
-        }
-//        Populate Table
-        try {
-            populateTable();
-        } catch (CouchbaseLiteException e) {
-            logger.error("Error populating table from CBLite DB", e);
-        }
+        InitiateSync.createLocalCBLiteFile();
+        populateTable();
     }
 
 
     @FXML
-    private void populateTable() throws CouchbaseLiteException {
+    public void populateTable() {
 
-        cbLiteDataMap = (InitiateSync.getDatabase() == null) ? new HashMap<>() : InitiateSync.getCBLiteData();
+        try {
+            cbLiteDataMap = (InitiateSync.getDatabase() == null) ? new HashMap<>() : InitiateSync.getCBLiteData();
+        } catch (CouchbaseLiteException e) {
+            logger.info("Unable to read CBLite DB",e);
+        }
         docId = new TableColumn<>("Key");
         docId.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
             @Override
@@ -157,11 +139,9 @@ public class MainController implements Initializable {
         ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
         dataTable.getColumns().setAll(docId, docValue);
         docId.setEditable(false);
-//        dataTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         docId.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(1)); //w*1/4
         docValue.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(3)); //w*3/4
         dataTable.setItems(items);
-//        ------- Set click on table
         dataTable.setRowFactory(tv -> {
             TableRow<Map.Entry<String, String>> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -194,9 +174,6 @@ public class MainController implements Initializable {
         try {
             in = new FileInputStream("config.xml");
             properties.loadFromXML(in);
-//            logger.info("Author :" + properties.getProperty("author"));
-//            logger.info("sgURL: " + properties.getProperty("sgURL"));
-//            logger.info("cblite-loc: " + properties.getProperty("cblite-loc"));
         } catch (IOException e) {
             logger.error("IO Exception on config file", e);
             setupProperties();
@@ -218,17 +195,19 @@ public class MainController implements Initializable {
     private void setDefaultProperties() {
         properties.setProperty("cblite-loc", "C:\\couchbaselight/resources");
         properties.setProperty("author", "amrishraje@gmail.com");
+//        TODO do not set default for SG
         properties.setProperty("sgURL", "ws://peplap04996.corp.pep.pvt:4984/syncdb");
         properties.setProperty("sgCert", "none");
+        properties.setProperty("sgDB", "syncdb");
     }
 
-    public void deleteDB(ActionEvent actionEvent) throws CouchbaseLiteException {
+    public void deleteDB(ActionEvent actionEvent) {
         InitiateSync.stopAndDeleteDB();
         statusLabel.setText("CBLite DB Deleted");
         populateTable();
     }
 
-    public void initSync(ActionEvent actionEvent) throws CouchbaseLiteException {
+    public void initSync(ActionEvent actionEvent) {
         InitiateSync.stopAndDeleteDB();
         InitiateSync.createLocalCBLiteFile();
         user = "";

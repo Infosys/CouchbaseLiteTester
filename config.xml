@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-<comment>Configuration</comment>
-<entry key="sgCert">C:\Users\09270742\Desktop\hhnextpoc.com-Self Signed Cert\hhnextpoc.com-2020-05-18-175235.cer</entry>
-<entry key="author">amrishraje@gmail.com</entry>
-<entry key="cblite-loc">C:\couchbaselight</entry>
-<entry key="sgURL">ws://40.119.0.138:80/syncdb</entry>
-</properties>

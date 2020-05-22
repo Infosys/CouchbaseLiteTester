@@ -2,7 +2,7 @@
  * Copyright (c) 2020.  amrishraje@gmail.com
  */
 
-package sample;
+package CBLiteTester;
 
 import javafx.application.Application;
 import javafx.application.Platform;
