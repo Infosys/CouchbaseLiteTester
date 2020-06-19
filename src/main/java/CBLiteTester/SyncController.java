@@ -1,5 +1,16 @@
 /*
  * Copyright (c) 2020.  amrishraje@gmail.com
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package CBLiteTester;
@@ -38,8 +49,8 @@ public class SyncController {
     public static final String DB_PATH = properties.getProperty("cblite-loc");
     public static String SYNC_GATEWAY_URL = properties.getProperty("sgURL");
     private static Database database;
-
     private static Replicator replicator;
+
 
     public static Database getDatabase() {
         return database;
@@ -69,7 +80,7 @@ public class SyncController {
         try {
             targetEndpoint = new URLEndpoint(new URI(SYNC_GATEWAY_URL));
         } catch (URISyntaxException e) {
-            logger.info("Bad Sync URL",e);
+            logger.info("Bad Sync URL", e);
         }
         ReplicatorConfiguration replicatorConfig = new ReplicatorConfiguration(database, targetEndpoint);
         replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
@@ -103,7 +114,10 @@ public class SyncController {
 //end cert pinning
         // Add authentication.
         replicatorConfig.setAuthenticator(new BasicAuthenticator(user, pwd));
+//        TODO support session based auth in future
+//        replicatorConfig.setAuthenticator(new SessionAuthenticator("00ee4a2fca27d65061f509f89c758e00a4ca83cf"));
         replicator = new Replicator(replicatorConfig);
+        //Add Change listener to check for errors
         replicator.addChangeListener(change -> {
             if (change.getStatus().getError() != null) {
                 logger.error("Error replicating from Sync GW, error:  " + change.getStatus().getError().getMessage()
