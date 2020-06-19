@@ -1,5 +1,16 @@
 /*
  * Copyright (c) 2020.  amrishraje@gmail.com
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package CBLiteTester;
@@ -47,10 +58,13 @@ public class SettingsController implements Initializable {
     void environmentAction(ActionEvent event) {
         switch (environment.getValue()) {
             case "QA":
-                sgURL.setText("peplap04997.corp.pep.pvt");
-                sgPort.setText("4984");
+//                sgURL.setText("peplap04997.corp.pep.pvt");
+                sgURL.setText("***REMOVED***");
+//                sgPort.setText("4984");
+                sgPort.setText("443");
                 sgDB.setText("syncdb");
-                sgScheme.setValue("ws://");
+//                sgScheme.setValue("ws://");
+                sgScheme.setValue("wss://");
                 break;
             case "Perf":
                 sgURL.setText("undefined");
@@ -66,10 +80,13 @@ public class SettingsController implements Initializable {
                 break;
             case "Dev":
             default:
-                sgURL.setText("peplap04996.corp.pep.pvt");
-                sgPort.setText("4984");
+//                sgURL.setText("peplap04996.corp.pep.pvt");
+                sgURL.setText("***REMOVED***");
+                sgPort.setText("443");
+//                sgPort.setText("4984");
                 sgDB.setText("syncdb");
-                sgScheme.setValue("ws://");
+                sgScheme.setValue("wss://");
+//                sgScheme.setValue("ws://");
                 break;
         }
     }

@@ -13,6 +13,17 @@
 
 <!--
   ~ Copyright (c) 2020.  amrishraje@gmail.com
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
   -->
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CBLiteTester.MainController">
@@ -43,7 +54,8 @@
                      </tooltip></Button>
                   <Button fx:id="reloadTable" layoutX="4.0" layoutY="494.0" mnemonicParsing="false" onAction="#populateTable" text="Reload Table" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                   <Button fx:id="settingsButton" layoutX="84.0" layoutY="536.0" mnemonicParsing="false" onAction="#openSettings" text="Settings" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                  <Label fx:id="statusLabel" layoutX="20.0" layoutY="281.0" maxWidth="300.0" prefHeight="86.0" prefWidth="200.0" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="280.0" />
+                  <Label fx:id="statusLabel" layoutX="20.0" layoutY="281.0" maxWidth="300.0" prefHeight="100.0" prefWidth="200.0" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="280.0" />
+                  <Label fx:id="tableStatusLabel" maxWidth="300.0" prefHeight="30.0" prefWidth="200.0" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="385.0" />
                   <Label layoutX="22.0" layoutY="200.0" text="Continuous Sync" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="200.0" />
                </children>
             </AnchorPane>

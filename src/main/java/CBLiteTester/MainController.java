@@ -1,5 +1,16 @@
 /*
  * Copyright (c) 2020.  amrishraje@gmail.com
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package CBLiteTester;
@@ -46,6 +57,7 @@ public class MainController implements Initializable {
     public Button initSync;
     public Button reloadTable;
     public Button stopSync;
+    public Label tableStatusLabel;
     @FXML
     private Button settingsButton;
     @FXML
@@ -114,7 +126,8 @@ public class MainController implements Initializable {
 
     @FXML
     public void populateTable() {
-
+//        TODO implement platform.runlater
+        tableStatusLabel.setText("Populating table from CBLite DB...");
         try {
             cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData();
         } catch (CouchbaseLiteException e) {
@@ -153,6 +166,7 @@ public class MainController implements Initializable {
             });
             return row;
         });
+//        tableStatusLabel.setText("");
     }
 
     private void showDataPopup(String key, String value) {
@@ -197,9 +211,9 @@ public class MainController implements Initializable {
         properties.setProperty("cblite-loc", "C:\\couchbaselight/resources");
         properties.setProperty("author", "amrishraje@gmail.com");
 //        TODO do not set default for SG
-        properties.setProperty("sgURL", "ws://peplap04996.corp.pep.pvt:4984/syncdb");
+        properties.setProperty("sgURL", "ws://none");
         properties.setProperty("sgCert", "none");
-        properties.setProperty("sgDB", "syncdb");
+        properties.setProperty("sgDB", "none");
     }
 
     public void deleteDB(ActionEvent actionEvent) {
