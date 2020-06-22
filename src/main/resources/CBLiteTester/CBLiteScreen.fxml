@@ -59,7 +59,7 @@
                   <Label layoutX="22.0" layoutY="200.0" text="Continuous Sync" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="200.0" />
                </children>
             </AnchorPane>
-            <TableView fx:id="dataTable" layoutX="251.0" layoutY="82.0" prefHeight="575.0" prefWidth="625.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <TableView fx:id="dataTable" layoutX="251.0" layoutY="82.0" prefHeight="560.0" prefWidth="650.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columns>
                   <TableColumn fx:id="docId" prefWidth="75.0" text="Doc Id" />
                   <TableColumn fx:id="docValue" prefWidth="75.0" text="Document Value" />
@@ -67,6 +67,12 @@
                <tooltip>
                   <Tooltip text="Click on a row to view and edit the document" />
                </tooltip></TableView>
+            <AnchorPane layoutX="252.0" layoutY="634.0" prefHeight="42.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <TextField fx:id="tableSearchText" layoutX="14.0" layoutY="9.0" prefHeight="26.0" prefWidth="244.0" promptText="Search..." />
+                  <Button fx:id="tableSearchButton" layoutX="273.0" layoutY="9.0" mnemonicParsing="false" onAction="#searchTable" text="Search" />
+               </children>
+            </AnchorPane>
          </children>
     </AnchorPane>
   </children>

@@ -20,6 +20,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -58,6 +59,7 @@ public class MainController implements Initializable {
     public Button reloadTable;
     public Button stopSync;
     public Label tableStatusLabel;
+    public TextField tableSearchText;
     @FXML
     private Button settingsButton;
     @FXML
@@ -151,11 +153,28 @@ public class MainController implements Initializable {
         });
 
         ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
+//        TODO test out filtering
+        FilteredList<Map.Entry<String, String>> filteredData = new FilteredList<>(items,p -> true);
+        tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(tableData -> {
+                // If filter text is empty, display all persons.
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (tableData.getKey().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches key.
+                }
+                return false; // Does not match.
+            });
+        });
         dataTable.getColumns().setAll(docId, docValue);
         docId.setEditable(false);
         docId.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(1)); //w*1/4
         docValue.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(3)); //w*3/4
-        dataTable.setItems(items);
+//        dataTable.setItems(items);
+        dataTable.setItems(filteredData);
         dataTable.setRowFactory(tv -> {
             TableRow<Map.Entry<String, String>> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -242,5 +261,8 @@ public class MainController implements Initializable {
     @FXML
     void stopContinuousSync(ActionEvent event) {
         SyncController.stopReplication();
+    }
+
+    public void searchTable(ActionEvent actionEvent) {
     }
 }
