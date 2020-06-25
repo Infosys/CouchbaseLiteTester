@@ -30,7 +30,7 @@ public class SwitchButton extends StackPane {
     private String buttonStyleOff = "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 0.2, 0.0, 0.0, 2); -fx-background-color: WHITE;";
     private String buttonStyleOn = "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 0.2, 0.0, 0.0, 2); -fx-background-color: #00893d;";
 
-    public boolean isContinuous() {
+    public boolean isOn() {
         return state;
     }
 

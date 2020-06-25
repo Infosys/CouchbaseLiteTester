@@ -136,7 +136,7 @@ public class SyncController {
                                 change.getStatus().getProgress().getTotal());
                         if (change.getStatus().getActivityLevel().equals(AbstractReplicator.ActivityLevel.STOPPED) ||
                                 change.getStatus().getActivityLevel().equals(AbstractReplicator.ActivityLevel.IDLE)) {
-                            mainController.populateTable();
+                            mainController.populateTable(false);
                         }
                     }
                 }
@@ -182,22 +182,32 @@ public class SyncController {
         }
     }
 
-    public static HashMap getCBLiteData() throws CouchbaseLiteException {
+    public static HashMap getCBLiteData(boolean fullDoc) throws CouchbaseLiteException {
         HashMap<String, String> cbData = new HashMap<>(10);
         Query queryAll = QueryBuilder.select(SelectResult.all(),
                 SelectResult.expression(Meta.id))
                 .from(DataSource.database(database));
         ResultSet resultFull = queryAll.execute();
         List<Result> results = resultFull.allResults();
-        for (Iterator iterator = results.iterator(); iterator.hasNext(); ) {
-            Result ts = (Result) iterator.next();
-
-            cbData.put(ts.getString("id"), ts.toList().get(0).toString());
-//        cbData.put(ts.getDictionary(0).getString("Id"), ts.toList().toString());
+        Result ts;
+        Iterator iterator = results.iterator();
+        while (iterator.hasNext()) {
+            ts = (Result) iterator.next();
+//            TODO optimization - this is taking for ever to load 1k docs. Implement pagination or filtering
+            if (fullDoc)
+                cbData.put(ts.getString("id"), ts.toList().get(0).toString());
+            else
+                cbData.put(ts.getString("id"), "Click to load document...");
         }
-
         logger.info("total number of records are :" + cbData.size());
         return cbData;
+    }
+
+    public static String getCBLiteDocument(String docId) throws CouchbaseLiteException{
+        Document doc = database.getDocument(docId);
+        logger.info(doc);
+        logger.info(doc.toString());
+        return doc.toString();
     }
 
     private static void loadProperties() {

@@ -30,7 +30,7 @@
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <AnchorPane prefHeight="575.0" prefWidth="250.0" style="-fx-background-color: #555555;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane prefHeight="575.0" prefWidth="250.0" style="-fx-background-color: #555555; -fx-border-color: #333333;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <TextField fx:id="userText" layoutX="39.0" layoutY="53.0" onAction="#startSync" prefHeight="25.0" prefWidth="200.0" promptText="User" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
                   <PasswordField fx:id="pwdText" layoutX="38.0" layoutY="106.0" onAction="#startSync" prefWidth="200.0" promptText="Password" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0" />
@@ -59,18 +59,23 @@
                   <Label layoutX="22.0" layoutY="200.0" text="Continuous Sync" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="200.0" />
                </children>
             </AnchorPane>
-            <TableView fx:id="dataTable" layoutX="251.0" layoutY="82.0" prefHeight="560.0" prefWidth="650.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <TableView fx:id="dataTable" layoutX="251.0" layoutY="82.0" prefHeight="560.0" prefWidth="650.0" style="-fx-border-color: #777777;" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columns>
-                  <TableColumn fx:id="docId" prefWidth="75.0" text="Doc Id" />
-                  <TableColumn fx:id="docValue" prefWidth="75.0" text="Document Value" />
+                  <TableColumn fx:id="docId" maxWidth="500.0" prefWidth="250.0" text="Doc Id" />
+                  <TableColumn fx:id="docValue" text="Document Value" />
                </columns>
                <tooltip>
                   <Tooltip text="Click on a row to view and edit the document" />
                </tooltip></TableView>
-            <AnchorPane layoutX="252.0" layoutY="634.0" prefHeight="42.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
+            <AnchorPane layoutX="252.0" layoutY="634.0" prefHeight="42.0" prefWidth="650.0" style="-fx-background-color: #888888; -fx-border-color: #777777;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
                <children>
                   <TextField fx:id="tableSearchText" layoutX="14.0" layoutY="9.0" prefHeight="26.0" prefWidth="244.0" promptText="Search..." />
-                  <Button fx:id="tableSearchButton" layoutX="273.0" layoutY="9.0" mnemonicParsing="false" onAction="#searchTable" text="Search" />
+                  <Label layoutX="486.0" layoutY="12.0" prefHeight="18.0" prefWidth="118.0" text="Load Full Document" textFill="WHITE" AnchorPane.rightAnchor="50.0">
+                     <tooltip>
+                        <Tooltip text="Loading all documents may take a few momemnts depending on size of data" />
+                     </tooltip>
+                  </Label>
+                  <SwitchButton fx:id="loadFullDocToggle" layoutX="605.0" layoutY="13.0" onMouseClicked="#loadFullDocument" AnchorPane.rightAnchor="20.0" />
                </children>
             </AnchorPane>
          </children>

@@ -20,6 +20,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.logging.Log;
@@ -41,13 +43,12 @@ public class SettingsController implements Initializable {
     public TextField cbLitePath;
     public Label sgSettingsErrLabel;
     public Button cancelButton;
+    public AnchorPane settingsPane;
     @FXML
     private Button sgSave;
     public Button chooseCert;
     @FXML
     private ComboBox<String> environment;
-    @FXML
-    private Accordion settingsAccordion;
     @FXML
     private TitledPane sgPane;
     @FXML
@@ -94,8 +95,21 @@ public class SettingsController implements Initializable {
     @FXML
     void certBox(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        File cert = fileChooser.showOpenDialog(sgPane.getScene().getWindow());
+        fileChooser.setTitle("Select Certificate");
+        File cert = fileChooser.showOpenDialog(settingsPane.getScene().getWindow());
         sgCertText.setText(cert.getPath());
+    }
+
+    @FXML
+    void cbLiteBox(ActionEvent event){
+//        FileChooser fileChooser = new FileChooser();
+//        File cert = fileChooser.showOpenDialog(settingsPane.getScene().getWindow());
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select CBLite Directory");
+//        File defaultDirectory = new File("C:\\couchbaselite");
+//        directoryChooser.setInitialDirectory(defaultDirectory);
+        File selectedDirectory = directoryChooser.showDialog(settingsPane.getScene().getWindow());
+        cbLitePath.setText(selectedDirectory.getPath());
     }
 
     @FXML
@@ -108,6 +122,7 @@ public class SettingsController implements Initializable {
             sgURLValue = sgScheme.getValue() + sgURL.getText() + ":" + sgPort.getText() + "/" + sgDB.getText();
         properties.setProperty("sgURL", sgURLValue);
         properties.setProperty("sgDB", sgDB.getText());
+        properties.setProperty("cblite-loc", cbLitePath.getText());
         if (sgScheme.getValue().toString().contains("wss")) {
             if (sgCertText.getText().isBlank()) {
                 sgSettingsErrLabel.setText("Certificate is required for wss scheme");
@@ -122,18 +137,8 @@ public class SettingsController implements Initializable {
             e.printStackTrace();
             logger.error("Error writing config file", e);
         }
-    }
-
-    @FXML
-    void cbLiteSave(ActionEvent event) {
-        properties.setProperty("cblite-loc", cbLitePath.getText());
-        try {
-            FileOutputStream out = new FileOutputStream("config.xml");
-            properties.storeToXML(out, "Configuration");
-        } catch (IOException e) {
-            e.printStackTrace();
-            logger.error("Error writing config file", e);
-        }
+        Stage stage = (Stage) sgSave.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
@@ -144,7 +149,6 @@ public class SettingsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         environment.setItems(FXCollections.observableArrayList("Dev", "QA", "Perf", "POC"));
-        settingsAccordion.setExpandedPane(sgPane);
         sgScheme.setItems(FXCollections.observableArrayList("ws://", "wss://"));
         try {
             properties.loadFromXML(new FileInputStream("config.xml"));

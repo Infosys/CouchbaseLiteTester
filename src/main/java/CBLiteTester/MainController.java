@@ -16,6 +16,7 @@
 package CBLiteTester;
 
 import com.couchbase.lite.CouchbaseLiteException;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -61,12 +62,13 @@ public class MainController implements Initializable {
     public Label tableStatusLabel;
     public TextField tableSearchText;
     @FXML
+    public TextField sgURL;
+    public SwitchButton loadFullDocToggle;
+    Properties properties = new Properties();
+    @FXML
     private Button settingsButton;
     @FXML
     private ChoiceBox<String> environment;
-    @FXML
-    public TextField sgURL;
-    Properties properties = new Properties();
     private Map<String, String> cbLiteDataMap;
     private String user = "";
     private String pwd;
@@ -105,16 +107,11 @@ public class MainController implements Initializable {
         }
         user = localUser;
         if (!SyncController.isReplicatorStarted) {
-            SyncController.startReplicator(localUser, pwd, continuousToggle.isContinuous(),this);
-//                if (InitiateSync.isIsReplError()) {
-//                    statusLabel.setText("Error syncing data: " + InitiateSync.getReplErrorMsg());
-//                }
-////                TODO populate table should be done after sync is stopped based on a change listener
-//                populateTable();
+            SyncController.startReplicator(localUser, pwd, continuousToggle.isOn(), this);
         } else {
             SyncController.onDemandSync();
-//                TODO populate table should be done after sync is stopped based on a change listener
-            populateTable();
+//                TODO is populate data needed here?
+            populateTable(false);
         }
     }
 
@@ -122,70 +119,96 @@ public class MainController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         readProperties();
         SyncController.createLocalCBLiteFile();
-        populateTable();
+        populateTable(false);
     }
 
 
     @FXML
-    public void populateTable() {
+    public void populateTable(ActionEvent event) {
+        populateTable(false);
+    }
+
+    public void populateTable(boolean fullDoc) {
+        tableStatusLabel.setText("Loading table from CBLite DB...");
 //        TODO implement platform.runlater
-        tableStatusLabel.setText("Populating table from CBLite DB...");
-        try {
-            cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData();
-        } catch (CouchbaseLiteException e) {
-            logger.info("Unable to read CBLite DB",e);
-        }
-        docId = new TableColumn<>("Key");
-        docId.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
+        Platform.runLater(new Runnable() {
             @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
-                return new SimpleStringProperty(p.getValue().getKey());
-            }
-        });
+            public void run() {
+                try {
+                    cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData(fullDoc);
+                } catch (CouchbaseLiteException e) {
+                    logger.info("Unable to read CBLite DB", e);
+                }
+                docId.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
+                        return new SimpleStringProperty(p.getValue().getKey());
+                    }
+                });
 
-//        TableColumn<Map.Entry<String, String>, String> docValue = new TableColumn<>("Value");
-        docValue = new TableColumn<>("Value");
-        docValue.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
-                return new SimpleStringProperty(p.getValue().getValue());
-            }
-        });
+                docValue.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
+                        return new SimpleStringProperty(p.getValue().getValue());
+                    }
+                });
 
-        ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
+                ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
 //        TODO test out filtering
-        FilteredList<Map.Entry<String, String>> filteredData = new FilteredList<>(items,p -> true);
-        tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(tableData -> {
-                // If filter text is empty, display all persons.
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
+                FilteredList<Map.Entry<String, String>> filteredData = new FilteredList<>(items, p -> true);
+                tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
+                    filteredData.setPredicate(tableData -> {
+                        // If filter text is empty, display all persons.
+                        if (newValue == null || newValue.isEmpty()) {
+                            return true;
+                        }
+                        String lowerCaseFilter = newValue.toLowerCase();
 
-                if (tableData.getKey().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches key.
-                }
-                return false; // Does not match.
-            });
+                        if (tableData.getKey().toLowerCase().contains(lowerCaseFilter)) {
+                            return true; // Filter matches key.
+                        }
+                        return false; // Does not match.
+                    });
+                });
+                dataTable.getColumns().setAll(docId, docValue);
+                docId.setEditable(false);
+                docId.prefWidthProperty().bind(dataTable.widthProperty().divide(8).multiply(3)); //w*3/8
+                docValue.prefWidthProperty().bind(dataTable.widthProperty().divide(8).multiply(5)); //w*5/8
+                dataTable.setItems(filteredData);
+                dataTable.setRowFactory(tv -> {
+                    TableRow<Map.Entry<String, String>> row = new TableRow<>();
+                    row.setOnMouseClicked(event -> {
+                        if (!row.isEmpty()) {
+                            Map.Entry<String, String> dataValue = row.getItem();
+                            String document = "Unable to load document!";
+                            if (dataValue.getValue() == "Click to load document...") {
+                                try {
+                                    document = SyncController.getCBLiteDocument(dataValue.getKey());
+                                    dataValue.setValue(document);
+                                    row.setItem(dataValue);
+                                    dataTable.refresh();
+                                } catch (CouchbaseLiteException e) {
+                                    logger.error("Error reading doc " + dataValue.getValue() + " from CBLite DB");
+                                }
+                                showDataPopup(dataValue.getKey(), document);
+                            } else
+                                showDataPopup(dataValue.getKey(), dataValue.getValue());
+                        }
+                    });
+                    return row;
+                });
+                showStatusForTable("");
+            }
         });
-        dataTable.getColumns().setAll(docId, docValue);
-        docId.setEditable(false);
-        docId.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(1)); //w*1/4
-        docValue.prefWidthProperty().bind(dataTable.widthProperty().divide(4).multiply(3)); //w*3/4
-//        dataTable.setItems(items);
-        dataTable.setItems(filteredData);
-        dataTable.setRowFactory(tv -> {
-            TableRow<Map.Entry<String, String>> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty()) {
-                    Map.Entry<String, String> dataValue = row.getItem();
-                    showDataPopup(dataValue.getKey(), dataValue.getValue());
-                }
-            });
-            return row;
+    }
+
+    private void showStatusForTable(String message) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                tableStatusLabel.setText(message);
+            }
         });
-//        tableStatusLabel.setText("");
     }
 
     private void showDataPopup(String key, String value) {
@@ -194,7 +217,7 @@ public class MainController implements Initializable {
             Parent dataRoot = (Parent) fxmlLoader.load();
             Stage stage = new Stage();
             stage.setTitle("Data Viewer");
-            stage.setScene(new Scene(dataRoot,800,500));
+            stage.setScene(new Scene(dataRoot, 800, 500));
             DataPopupController dataPopupController = fxmlLoader.getController();
             dataPopupController.loadDataTextArea(key, value);
             stage.show();
@@ -238,7 +261,7 @@ public class MainController implements Initializable {
     public void deleteDB(ActionEvent actionEvent) {
         SyncController.stopAndDeleteDB();
         statusLabel.setText("CBLite DB Deleted");
-        populateTable();
+        populateTable(false);
     }
 
     public void initSync(ActionEvent actionEvent) {
@@ -246,14 +269,14 @@ public class MainController implements Initializable {
         SyncController.createLocalCBLiteFile();
         user = "";
         statusLabel.setText("Initialization Complete, you may sync again");
-        populateTable();
+        populateTable(false);
     }
 
     @FXML
     void toggleContinuousMode(MouseEvent event) {
-        if (continuousToggle.isContinuous()){
+        if (continuousToggle.isOn()) {
             stopSync.setDisable(false);
-        }else {
+        } else {
             stopSync.setDisable(true);
         }
     }
@@ -263,6 +286,13 @@ public class MainController implements Initializable {
         SyncController.stopReplication();
     }
 
-    public void searchTable(ActionEvent actionEvent) {
+    public void loadFullDocument(MouseEvent mouseEvent) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                populateTable(loadFullDocToggle.isOn());
+            }
+        });
     }
+
 }
