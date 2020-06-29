@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane fx:id="editChannelPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CBLiteTester.ChannelEditorController">
+   <children>
+      <TextField fx:id="channelsList" layoutX="14.0" layoutY="25.0" prefHeight="26.0" prefWidth="330.0" promptText="Enter comma separated list of channels" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+      <ButtonBar layoutX="14.0" layoutY="58.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.rightAnchor="10.0">
+        <buttons>
+          <Button fx:id="setChannelsButton" defaultButton="true" mnemonicParsing="false" onAction="#saveChannelEditor" text="Set Channels" />
+            <Button fx:id="channelEditorCancel" cancelButton="true" mnemonicParsing="false" onAction="#closeWindow" text="Cancel" />
+        </buttons>
+      </ButtonBar>
+   </children>
+</AnchorPane>
