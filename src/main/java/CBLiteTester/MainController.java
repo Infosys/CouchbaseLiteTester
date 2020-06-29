@@ -20,6 +20,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -30,10 +31,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.ToggleSwitch;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +59,7 @@ public class MainController implements Initializable {
     public TableView dataTable;
     public TableColumn<Map.Entry<String, String>, String> docId;
     public TableColumn<Map.Entry<String, String>, String> docValue;
-    public SwitchButton continuousToggle;
+    public SwitchButton continuousToggleRemove;
     public Button initSync;
     public Button reloadTable;
     public Button stopSync;
@@ -64,6 +68,11 @@ public class MainController implements Initializable {
     @FXML
     public TextField sgURL;
     public SwitchButton loadFullDocToggle;
+    //    public ComboBox channelsComboBox;
+    public AnchorPane tableAnchorPane;
+    public ToggleSwitch loadFullDocSwitch;
+    public ToggleSwitch continuousToggle;
+    public CheckComboBox channelsComboBoxList;
     Properties properties = new Properties();
     @FXML
     private Button settingsButton;
@@ -91,6 +100,21 @@ public class MainController implements Initializable {
         }
     }
 
+    void openChannelEditor() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChannelEditor.fxml"));
+            Parent settingRoot = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Channel Editor");
+            stage.setScene(new Scene(settingRoot));
+            ChannelEditorController channelEditorController = fxmlLoader.getController();
+            channelEditorController.getParentInstance(this);
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error loading ChannelEditor.fxml", e);
+        }
+    }
+
     @FXML
     void startSync(ActionEvent event) {
         statusLabel.setText("");
@@ -107,7 +131,7 @@ public class MainController implements Initializable {
         }
         user = localUser;
         if (!SyncController.isReplicatorStarted) {
-            SyncController.startReplicator(localUser, pwd, continuousToggle.isOn(), this);
+            SyncController.startReplicator(localUser, pwd, continuousToggle.isSelected(), this);
         } else {
             SyncController.onDemandSync();
 //                TODO is populate data needed here?
@@ -120,6 +144,13 @@ public class MainController implements Initializable {
         readProperties();
         SyncController.createLocalCBLiteFile();
         populateTable(false);
+        channelsComboBoxList.getCheckModel().getCheckedItems().addListener((ListChangeListener) change -> {
+            logger.info("Selected: " + channelsComboBoxList.getCheckModel().getCheckedItems());
+            if (channelsComboBoxList.getCheckModel().getCheckedItems().contains("Click to add...")) {
+                channelsComboBoxList.getCheckModel().toggleCheckState(0);
+                openChannelEditor();
+            }
+        });
     }
 
 
@@ -274,7 +305,7 @@ public class MainController implements Initializable {
 
     @FXML
     void toggleContinuousMode(MouseEvent event) {
-        if (continuousToggle.isOn()) {
+        if (continuousToggle.isSelected()) {
             stopSync.setDisable(false);
         } else {
             stopSync.setDisable(true);
@@ -290,9 +321,29 @@ public class MainController implements Initializable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                populateTable(loadFullDocToggle.isOn());
+                populateTable(loadFullDocSwitch.isSelected());
             }
         });
     }
 
+    public void setUpChannels(MouseEvent mouseEvent) {
+        logger.info("Combo Mouse Entered ");
+        if (channelsComboBoxList.getItems().isEmpty()
+                || channelsComboBoxList.getItems().get(0).equals("Set Admin URL in Settings...")) {
+            readProperties();
+            if (properties.getProperty("sgAdminURL", "").isBlank()) {
+                if (channelsComboBoxList.getItems().isEmpty()) {
+                    channelsComboBoxList.getItems().add("Set Admin URL in Settings...");
+                }
+            } else {
+//                TODO GET channels from SG
+//                First empty current item list and then set new channels
+                channelsComboBoxList.getItems().removeAll();
+                channelsComboBoxList.getItems().add("Click to add...");
+                channelsComboBoxList.getItems().add("Channel1");
+                channelsComboBoxList.getItems().add("Channel2");
+                channelsComboBoxList.getItems().add("Channel3");
+            }
+        }
+    }
 }

@@ -19,5 +19,18 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.json:json:20180813" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.6" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" name="Maven: org.controlsfx:controlsfx:11.0.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-base:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-base:win:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-web:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-web:win:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-graphics:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-graphics:win:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-controls:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-controls:win:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-swing:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-swing:win:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-media:11.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-media:win:11.0.2" level="project" />
   </component>
 </module>

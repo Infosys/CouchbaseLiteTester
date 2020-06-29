@@ -60,6 +60,11 @@
                   <Button mnemonicParsing="false" onAction="#cbLiteBox" text="Choose CBLite DB" />
                </children>
             </HBox>
+            <HBox>
+               <children>
+                  <TextField fx:id="sgAdminText" prefHeight="26.0" prefWidth="585.0" promptText="SG Admin URL e.g. https://host:4985 (optional)" />
+               </children>
+            </HBox>
             <Label fx:id="sgSettingsErrLabel" prefHeight="18.0" prefWidth="579.0" textFill="#ee0606" />
          </children>
          <padding>

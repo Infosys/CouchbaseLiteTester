@@ -27,7 +27,10 @@ import javafx.stage.Stage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -44,16 +47,17 @@ public class SettingsController implements Initializable {
     public Label sgSettingsErrLabel;
     public Button cancelButton;
     public AnchorPane settingsPane;
+    public Button chooseCert;
+    public TextField sgAdminText;
+    Properties properties = new Properties();
     @FXML
     private Button sgSave;
-    public Button chooseCert;
     @FXML
     private ComboBox<String> environment;
     @FXML
     private TitledPane sgPane;
     @FXML
     private TextField sgCertText;
-    Properties properties = new Properties();
 
     @FXML
     void environmentAction(ActionEvent event) {
@@ -101,7 +105,7 @@ public class SettingsController implements Initializable {
     }
 
     @FXML
-    void cbLiteBox(ActionEvent event){
+    void cbLiteBox(ActionEvent event) {
 //        FileChooser fileChooser = new FileChooser();
 //        File cert = fileChooser.showOpenDialog(settingsPane.getScene().getWindow());
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -116,6 +120,10 @@ public class SettingsController implements Initializable {
     void sgSaveAction(ActionEvent event) {
         String sgURLValue;
         sgSettingsErrLabel.setText("");
+        if (sgURL.getText().isBlank()) {
+            sgSettingsErrLabel.setText("URL cannot be blank");
+            return;
+        }
         if (sgPort.getText().isBlank())
             sgURLValue = sgScheme.getValue() + sgURL.getText() + "/" + sgDB.getText();
         else
@@ -123,11 +131,13 @@ public class SettingsController implements Initializable {
         properties.setProperty("sgURL", sgURLValue);
         properties.setProperty("sgDB", sgDB.getText());
         properties.setProperty("cblite-loc", cbLitePath.getText());
+        properties.setProperty("sgAdminURL",sgAdminText.getText());
         if (sgScheme.getValue().toString().contains("wss")) {
             if (sgCertText.getText().isBlank()) {
                 sgSettingsErrLabel.setText("Certificate is required for wss scheme");
+                return;
             } else {
-                properties.setProperty("sgCert",sgCertText.getText());
+                properties.setProperty("sgCert", sgCertText.getText());
             }
         }
         try {
@@ -146,6 +156,7 @@ public class SettingsController implements Initializable {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         environment.setItems(FXCollections.observableArrayList("Dev", "QA", "Perf", "POC"));

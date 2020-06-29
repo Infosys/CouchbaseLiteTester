@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import CBLiteTester.SwitchButton?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
@@ -10,6 +9,8 @@
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.CheckComboBox?>
+<?import org.controlsfx.control.ToggleSwitch?>
 
 <!--
   ~ Copyright (c) 2020.  amrishraje@gmail.com
@@ -33,30 +34,31 @@
             <AnchorPane prefHeight="575.0" prefWidth="250.0" style="-fx-background-color: #555555; -fx-border-color: #333333;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <TextField fx:id="userText" layoutX="39.0" layoutY="53.0" onAction="#startSync" prefHeight="25.0" prefWidth="200.0" promptText="User" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
-                  <PasswordField fx:id="pwdText" layoutX="38.0" layoutY="106.0" onAction="#startSync" prefWidth="200.0" promptText="Password" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0" />
-                  <Button fx:id="syncButton" layoutX="50.0" layoutY="152.0" mnemonicParsing="false" onAction="#startSync" prefWidth="100.0" text="Sync" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="150.0">
+                  <PasswordField fx:id="pwdText" layoutX="38.0" layoutY="106.0" onAction="#startSync" prefWidth="200.0" promptText="Password" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="90.0" />
+                  <Button fx:id="syncButton" layoutX="50.0" layoutY="152.0" mnemonicParsing="false" onAction="#startSync" prefWidth="100.0" text="Sync" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="170.0">
                      <tooltip>
                         <Tooltip text="Sync with Sync Gateway" />
                      </tooltip></Button>
-                  <Button fx:id="stopSync" disable="true" layoutX="134.0" layoutY="150.0" mnemonicParsing="false" onAction="#stopContinuousSync" prefWidth="100.0" text="Stop Sync" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="150.0">
+                  <Button fx:id="stopSync" disable="true" layoutX="134.0" layoutY="150.0" mnemonicParsing="false" onAction="#stopContinuousSync" prefWidth="100.0" text="Stop Sync" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="170.0">
                      <tooltip>
                         <Tooltip text="Stop sync if continuous sync is running" />
                      </tooltip>
                   </Button>
-                  <SwitchButton fx:id="continuousToggle" layoutX="130.0" layoutY="201.0" onMouseClicked="#toggleContinuousMode" AnchorPane.topAnchor="200.0" />
-                  <Button fx:id="initSync" layoutX="22.0" layoutY="236.0" mnemonicParsing="false" onAction="#initSync" prefHeight="25.0" prefWidth="100.0" text="Initialize" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="235.0">
+                  <Button fx:id="initSync" layoutX="22.0" layoutY="236.0" mnemonicParsing="false" onAction="#initSync" prefHeight="25.0" prefWidth="100.0" text="Initialize" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="255.0">
                      <tooltip>
                         <Tooltip text="Initialize DB and sync" />
                      </tooltip></Button>
-                  <Button fx:id="deleteSync" layoutX="129.0" layoutY="236.0" mnemonicParsing="false" onAction="#deleteDB" prefHeight="25.0" prefWidth="100.0" text="Delete" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="235.0">
+                  <Button fx:id="deleteSync" layoutX="129.0" layoutY="236.0" mnemonicParsing="false" onAction="#deleteDB" prefHeight="25.0" prefWidth="100.0" text="Delete" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="255.0">
                      <tooltip>
                         <Tooltip text="Delete local CBLite DB file" />
                      </tooltip></Button>
                   <Button fx:id="reloadTable" layoutX="4.0" layoutY="494.0" mnemonicParsing="false" onAction="#populateTable" text="Reload Table" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                   <Button fx:id="settingsButton" layoutX="84.0" layoutY="536.0" mnemonicParsing="false" onAction="#openSettings" text="Settings" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                  <Label fx:id="statusLabel" layoutX="20.0" layoutY="281.0" maxWidth="300.0" prefHeight="100.0" prefWidth="200.0" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="280.0" />
-                  <Label fx:id="tableStatusLabel" maxWidth="300.0" prefHeight="30.0" prefWidth="200.0" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="385.0" />
-                  <Label layoutX="22.0" layoutY="200.0" text="Continuous Sync" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="200.0" />
+                  <Label fx:id="statusLabel" layoutX="20.0" layoutY="281.0" maxWidth="300.0" prefHeight="100.0" prefWidth="200.0" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="305.0" />
+                  <Label fx:id="tableStatusLabel" maxWidth="300.0" prefHeight="30.0" prefWidth="200.0" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="410.0" />
+                  <Label layoutX="21.0" layoutY="211.0" text="Continuous Sync" textFill="WHITE" AnchorPane.leftAnchor="21.0" AnchorPane.topAnchor="211.0" />
+                  <ToggleSwitch fx:id="continuousToggle" layoutX="99.0" layoutY="211.0" onMouseClicked="#toggleContinuousMode" textFill="WHITE" AnchorPane.rightAnchor="99.4" />
+                  <CheckComboBox fx:id="channelsComboBoxList" layoutX="21.0" layoutY="131.0" onMouseEntered="#setUpChannels" title="Sync Channels... Default: All" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="130.0" />
                </children>
             </AnchorPane>
             <TableView fx:id="dataTable" layoutX="251.0" layoutY="82.0" prefHeight="560.0" prefWidth="650.0" style="-fx-border-color: #777777;" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -67,15 +69,15 @@
                <tooltip>
                   <Tooltip text="Click on a row to view and edit the document" />
                </tooltip></TableView>
-            <AnchorPane layoutX="252.0" layoutY="634.0" prefHeight="42.0" prefWidth="650.0" style="-fx-background-color: #888888; -fx-border-color: #777777;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
+            <AnchorPane fx:id="tableAnchorPane" layoutX="252.0" layoutY="634.0" prefHeight="42.0" prefWidth="650.0" style="-fx-background-color: #888888; -fx-border-color: #777777;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
                <children>
                   <TextField fx:id="tableSearchText" layoutX="14.0" layoutY="9.0" prefHeight="26.0" prefWidth="244.0" promptText="Search..." />
-                  <Label layoutX="486.0" layoutY="12.0" prefHeight="18.0" prefWidth="118.0" text="Load Full Document" textFill="WHITE" AnchorPane.rightAnchor="50.0">
+                  <Label layoutX="482.0" layoutY="13.0" prefHeight="18.0" prefWidth="118.0" text="Load Full Document" textFill="WHITE" AnchorPane.rightAnchor="49.60000000000002">
                      <tooltip>
                         <Tooltip text="Loading all documents may take a few momemnts depending on size of data" />
                      </tooltip>
                   </Label>
-                  <SwitchButton fx:id="loadFullDocToggle" layoutX="605.0" layoutY="13.0" onMouseClicked="#loadFullDocument" AnchorPane.rightAnchor="20.0" />
+                  <ToggleSwitch fx:id="loadFullDocSwitch" layoutX="429.0" layoutY="12.0" onMouseClicked="#loadFullDocument" textFill="WHITE" AnchorPane.rightAnchor="10.0" />
                </children>
             </AnchorPane>
          </children>
