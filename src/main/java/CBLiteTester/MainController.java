@@ -327,18 +327,19 @@ public class MainController implements Initializable {
     }
 
     public void setUpChannels(MouseEvent mouseEvent) {
-        logger.info("Combo Mouse Entered ");
-        if (channelsComboBoxList.getItems().isEmpty()
-                || channelsComboBoxList.getItems().get(0).equals("Set Admin URL in Settings...")) {
+        if (!(channelsComboBoxList.getItems().isEmpty())
+        && channelsComboBoxList.getItems().get(0).equals("Set Admin URL in Settings...")) {
             readProperties();
+            channelsComboBoxList.getItems().clear();
+        }
+
+        if (channelsComboBoxList.getItems().isEmpty()) {
             if (properties.getProperty("sgAdminURL", "").isBlank()) {
-                if (channelsComboBoxList.getItems().isEmpty()) {
-                    channelsComboBoxList.getItems().add("Set Admin URL in Settings...");
-                }
+                channelsComboBoxList.getItems().add("Set Admin URL in Settings...");
             } else {
 //                TODO GET channels from SG
 //                First empty current item list and then set new channels
-                channelsComboBoxList.getItems().removeAll();
+                channelsComboBoxList.getItems().clear();
                 channelsComboBoxList.getItems().add("Click to add...");
                 channelsComboBoxList.getItems().add("Channel1");
                 channelsComboBoxList.getItems().add("Channel2");
