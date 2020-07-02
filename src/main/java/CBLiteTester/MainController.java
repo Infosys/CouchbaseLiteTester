@@ -44,10 +44,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MainController implements Initializable {
     private static final Log logger = LogFactory.getLog(MainController.class);
@@ -67,7 +64,6 @@ public class MainController implements Initializable {
     public TextField tableSearchText;
     @FXML
     public TextField sgURL;
-    public SwitchButton loadFullDocToggle;
     //    public ComboBox channelsComboBox;
     public AnchorPane tableAnchorPane;
     public ToggleSwitch loadFullDocSwitch;
@@ -118,6 +114,7 @@ public class MainController implements Initializable {
     @FXML
     void startSync(ActionEvent event) {
         statusLabel.setText("");
+        loadFullDocSwitch.setSelected(false);
         logger.info("Starting sync");
         String localUser = userText.getText();
         pwd = pwdText.getText();
@@ -130,8 +127,9 @@ public class MainController implements Initializable {
             return;
         }
         user = localUser;
+        List<String> channels = channelsComboBoxList.getCheckModel().getCheckedItems();
         if (!SyncController.isReplicatorStarted) {
-            SyncController.startReplicator(localUser, pwd, continuousToggle.isSelected(), this);
+            SyncController.startReplicator(localUser, pwd, continuousToggle.isSelected(), channels, this);
         } else {
             SyncController.onDemandSync();
 //                TODO is populate data needed here?
@@ -157,6 +155,7 @@ public class MainController implements Initializable {
     @FXML
     public void populateTable(ActionEvent event) {
         populateTable(false);
+        loadFullDocSwitch.setSelected(false);
     }
 
     public void populateTable(boolean fullDoc) {
@@ -337,13 +336,9 @@ public class MainController implements Initializable {
             if (properties.getProperty("sgAdminURL", "").isBlank()) {
                 channelsComboBoxList.getItems().add("Set Admin URL in Settings...");
             } else {
-//                TODO GET channels from SG
-//                First empty current item list and then set new channels
                 channelsComboBoxList.getItems().clear();
                 channelsComboBoxList.getItems().add("Click to add...");
-                channelsComboBoxList.getItems().add("Channel1");
-                channelsComboBoxList.getItems().add("Channel2");
-                channelsComboBoxList.getItems().add("Channel3");
+//                TODO GET channels from SG that user has access to
             }
         }
     }

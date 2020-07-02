@@ -70,8 +70,9 @@ public class SyncController {
         logger.info("CbLite file has been created and database has been initialized");
     }
 
-    public static void startReplicator(String user, String pwd, boolean isContinuous, MainController controller) {
-        logger.info("calling startReplicator");
+    public static void startReplicator(String user, String pwd, boolean isContinuous, List<String> channels, MainController controller) {
+        logger.debug("calling startReplicator");
+        logger.debug("syncing channels: " + channels);
         mainController = controller;
         if (database == null) createLocalCBLiteFile();
         loadProperties();
@@ -87,6 +88,8 @@ public class SyncController {
 //        Do not replicate deleted docs!
         replicatorConfig.setPullFilter((document, flags) -> !flags.contains(DocumentFlag.DocumentFlagsDeleted));
 
+//      Set sync channels
+        replicatorConfig.setChannels(channels);
 //    Amrish - Cert pinning
         if (!properties.getProperty("sgCert", "none").equals("none")) {
             InputStream is = null;
