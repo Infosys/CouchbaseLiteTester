@@ -16,17 +16,19 @@
 package CBLiteTester;
 
 
-import com.couchbase.lite.internal.utils.JsonUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
-public class ChannelEditorController {
+public class ChannelEditorController implements Initializable {
 
     public Button setChannelsButton;
     public AnchorPane editChannelPane;
@@ -34,7 +36,7 @@ public class ChannelEditorController {
     public String[] channels;
     public MainController mainController;
 
-//    TODO clean up this code
+    //    TODO clean up this code
     public void saveChannelEditor(ActionEvent event) {
         channels = channelsList.getText().split(",");
         Arrays.stream(channels).forEach(s -> mainController.channelsComboBoxList.getItems().add(s));
@@ -42,7 +44,17 @@ public class ChannelEditorController {
         closeWindow(event);
     }
 
-    public void getParentInstance(MainController mainController){
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+//        Platform.runLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                channelsList.requestFocus();
+//            }
+//        });
+    }
+
+    public void getParentInstance(MainController mainController) {
         this.mainController = mainController;
     }
 

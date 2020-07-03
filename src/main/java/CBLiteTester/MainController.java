@@ -16,6 +16,9 @@
 package CBLiteTester;
 
 import com.couchbase.lite.CouchbaseLiteException;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.sun.javafx.fxml.builder.URLBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -34,6 +37,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.controlsfx.control.CheckComboBox;
@@ -43,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
@@ -77,6 +85,7 @@ public class MainController implements Initializable {
     private Map<String, String> cbLiteDataMap;
     private String user = "";
     private String pwd;
+    private boolean channelsSet;
 
     public MainController() {
         cbLiteDataMap = new HashMap<>();
@@ -147,10 +156,14 @@ public class MainController implements Initializable {
             if (channelsComboBoxList.getCheckModel().getCheckedItems().contains("Click to add...")) {
                 channelsComboBoxList.getCheckModel().toggleCheckState(0);
                 openChannelEditor();
+            } else {
+                if (channelsComboBoxList.getCheckModel().getCheckedItems().contains("Set Admin URL in Settings...")) {
+                    channelsComboBoxList.getCheckModel().toggleCheckState(1);
+                    openSettings(null);
+                }
             }
         });
     }
-
 
     @FXML
     public void populateTable(ActionEvent event) {
@@ -326,19 +339,51 @@ public class MainController implements Initializable {
     }
 
     public void setUpChannels(MouseEvent mouseEvent) {
-        if (!(channelsComboBoxList.getItems().isEmpty())
-        && channelsComboBoxList.getItems().get(0).equals("Set Admin URL in Settings...")) {
-            readProperties();
-            channelsComboBoxList.getItems().clear();
-        }
-
         if (channelsComboBoxList.getItems().isEmpty()) {
+            channelsComboBoxList.getItems().add("Click to add...");
+            readProperties();
             if (properties.getProperty("sgAdminURL", "").isBlank()) {
                 channelsComboBoxList.getItems().add("Set Admin URL in Settings...");
-            } else {
-                channelsComboBoxList.getItems().clear();
-                channelsComboBoxList.getItems().add("Click to add...");
-//                TODO GET channels from SG that user has access to
+            }
+        }
+        if (!properties.getProperty("sgAdminURL", "").isBlank() && !channelsSet) {
+            channelsSet = true;
+            Gson gson = new Gson();
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            String adminUrl = properties.getProperty("sgAdminURL") + "/"
+                    + properties.getProperty("sgDB") + "/_user/"
+                    + userText.getText();
+//            HttpUrl adminUrl = new HttpUrl.Builder()
+////                    .scheme("https")
+//                    .host(properties.getProperty("sgAdminURL"))
+//                    .addPathSegments("syncdb").addPathSegment("_user")
+//                    .addPathSegment("99490041").build();
+            logger.info("Built url is: " + adminUrl);
+            Request request = new Request.Builder()
+//                    todo build proper url
+                    .url("***REMOVED***/syncdb/_user/99490041")
+                    .method("GET", null)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .addHeader("Authorization", "Basic ***REMOVED***")
+                    .build();
+            try {
+                Response response = client.newCall(request).execute();
+                JsonObject responseJson = gson.fromJson(response.body().string(), JsonObject.class);
+                if (response.isSuccessful()) {
+                    responseJson.get("all_channels").getAsJsonArray().iterator().forEachRemaining(jsonElement -> {
+                        channelsComboBoxList.getItems().add(jsonElement.getAsString());
+                    });
+                } else {
+                    if (response.code() == 404 && responseJson.get("reason").getAsString().equals("missing")){
+                        logger.info("User not found");
+                    } else {
+                    logger.error("Call to _user API failed");
+                    logger.error("Response: " + response);
+                    }
+                }
+            } catch (IOException e) {
+                logger.error("Unable to call Sync Gateway _user API to get channels: " + e.getMessage());
             }
         }
     }
