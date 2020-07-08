@@ -208,9 +208,7 @@ public class SyncController {
 
     public static String getCBLiteDocument(String docId) throws CouchbaseLiteException{
         Document doc = database.getDocument(docId);
-        logger.info(doc);
-        logger.info(doc.toString());
-        return doc.toString();
+        return doc.toMap().toString();
     }
 
     private static void loadProperties() {

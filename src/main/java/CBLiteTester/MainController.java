@@ -83,6 +83,8 @@ public class MainController implements Initializable {
     private String user = "";
     private String pwd;
     private boolean channelsSet;
+    private String currentEnvironment;
+
 
     public MainController() {
         cbLiteDataMap = new HashMap<>();
@@ -149,7 +151,6 @@ public class MainController implements Initializable {
         SyncController.createLocalCBLiteFile();
         populateTable(false);
         channelsComboBoxList.getCheckModel().getCheckedItems().addListener((ListChangeListener) change -> {
-            logger.info("Selected: " + channelsComboBoxList.getCheckModel().getCheckedItems());
             if (channelsComboBoxList.getCheckModel().getCheckedItems().contains("Click to add...")) {
                 channelsComboBoxList.getCheckModel().toggleCheckState(0);
                 openChannelEditor();
@@ -335,9 +336,9 @@ public class MainController implements Initializable {
     }
 
     public void setUpChannels(MouseEvent mouseEvent) {
+        readProperties();
         if (channelsComboBoxList.getItems().isEmpty()) {
             channelsComboBoxList.getItems().add("Click to add...");
-            readProperties();
             if (properties.getProperty("sgAdminURL", "").isBlank()) {
                 channelsComboBoxList.getItems().add("Set Admin URL in Settings...");
             }
@@ -345,10 +346,15 @@ public class MainController implements Initializable {
         if (!properties.getProperty("sgAdminURL", "").isBlank() && !channelsSet) {
             if (!userText.getText().isBlank()) callSyncGw();
         }
+
+        if (!properties.getProperty("sgAdminURL", "").equals(currentEnvironment)) {
+            if (!userText.getText().isBlank()) callSyncGw();
+        }
     }
 
     private void callSyncGw() {
         channelsSet = true;
+        currentEnvironment = properties.getProperty("sgAdminURL", "");
         Gson gson = new Gson();
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         String adminUrl = properties.getProperty("sgAdminURL") + "/"
@@ -367,6 +373,8 @@ public class MainController implements Initializable {
             Response response = client.newCall(request).execute();
             JsonObject responseJson = gson.fromJson(response.body().string(), JsonObject.class);
             if (response.isSuccessful()) {
+                channelsComboBoxList.getItems().clear();
+                channelsComboBoxList.getItems().add("Click to add...");
                 responseJson.get("all_channels").getAsJsonArray().iterator().forEachRemaining(jsonElement -> {
                     channelsComboBoxList.getItems().add(jsonElement.getAsString());
                 });
