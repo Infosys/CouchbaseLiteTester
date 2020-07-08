@@ -31,7 +31,12 @@ public class Main extends Application {
     private static final Log logger = LogFactory.getLog(Main.class);
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        Parent root = FXMLLoader.load(getClass().getResource("Settings.fxml"));
+        System.out.println("=============================================================================");
+        System.out.println("Couchbase CBLite Tester");
+        System.out.println("Author: Amrish Raje");
+        System.out.println("Repo: https://github.com/amrishraje/CBLiteTester");
+        System.out.println("License: https://github.com/amrishraje/CBLiteTester/blob/master/LICENSE");
+        System.out.println("=============================================================================");
         Parent root = FXMLLoader.load(getClass().getResource("CBLiteScreen.fxml"));
         primaryStage.setTitle("Couchbase Lite Sync");
         primaryStage.setScene(new Scene(root, 900, 600));
