@@ -50,6 +50,7 @@ public class SettingsController implements Initializable {
     public Button chooseCert;
     public TextField sgAdminText;
     Properties properties = new Properties();
+    Properties defaults = new Properties();
     @FXML
     private Button sgSave;
     @FXML
@@ -61,39 +62,11 @@ public class SettingsController implements Initializable {
 
     @FXML
     void environmentAction(ActionEvent event) {
-        switch (environment.getValue()) {
-            case "QA":
-//                sgURL.setText("peplap04997.corp.pep.pvt");
-                sgURL.setText("***REMOVED***");
-//                sgPort.setText("4984");
-                sgPort.setText("443");
-                sgDB.setText("syncdb");
-//                sgScheme.setValue("ws://");
-                sgScheme.setValue("wss://");
-                break;
-            case "Perf":
-                sgURL.setText("undefined");
-                sgPort.setText("4984");
-                sgDB.setText("syncdb");
-                sgScheme.setValue("ws://");
-                break;
-            case "POC":
-                sgURL.setText("52.153.112.176");
-                sgPort.setText("443");
-                sgDB.setText("syncdb");
-                sgScheme.setValue("wss://");
-                break;
-            case "Dev":
-            default:
-//                sgURL.setText("peplap04996.corp.pep.pvt");
-                sgURL.setText("***REMOVED***");
-                sgPort.setText("443");
-//                sgPort.setText("4984");
-                sgDB.setText("syncdb");
-                sgScheme.setValue("wss://");
-//                sgScheme.setValue("ws://");
-                break;
-        }
+        sgURL.setText(defaults.getProperty(environment.getValue() + ".sgURL","undefined"));
+        sgPort.setText(defaults.getProperty(environment.getValue() + ".sgPort","undefined"));
+        sgDB.setText(defaults.getProperty(environment.getValue() + ".sgDB","undefined"));
+        sgScheme.setValue(defaults.getProperty(environment.getValue() + ".sgScheme","undefined"));
+        sgAdminText.setText(defaults.getProperty(environment.getValue() + ".sgAdminURL","undefined"));
     }
 
     @FXML
@@ -131,10 +104,10 @@ public class SettingsController implements Initializable {
         properties.setProperty("sgURL", sgURLValue);
         properties.setProperty("sgDB", sgDB.getText());
         properties.setProperty("cblite-loc", cbLitePath.getText());
-        properties.setProperty("sgAdminURL",sgAdminText.getText());
+        properties.setProperty("sgAdminURL", sgAdminText.getText());
         if (sgScheme.getValue().toString().contains("wss")) {
             if (sgCertText.getText().isBlank()) {
-                sgSettingsErrLabel.setText("Certificate is required for wss scheme");
+                sgSettingsErrLabel.setText("Certificate is required for wss scheme. Hint: Browse to SG URL and download cert");
                 return;
             } else {
                 properties.setProperty("sgCert", sgCertText.getText());
@@ -159,12 +132,15 @@ public class SettingsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        environment.setItems(FXCollections.observableArrayList("Dev", "QA", "Perf", "POC"));
-        sgScheme.setItems(FXCollections.observableArrayList("ws://", "wss://"));
         try {
             properties.loadFromXML(new FileInputStream("config.xml"));
+            defaults.loadFromXML(new FileInputStream("defaults.xml"));
         } catch (IOException e) {
             logger.error("Error reading config file", e);
         }
+//        environment.setItems(FXCollections.observableArrayList("Dev", "QA", "Perf", "POC"));
+        String environments[] = defaults.getProperty("environments").split(",");
+        environment.setItems(FXCollections.observableArrayList(environments));
+        sgScheme.setItems(FXCollections.observableArrayList("ws://", "wss://"));
     }
 }
