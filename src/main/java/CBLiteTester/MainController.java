@@ -18,7 +18,6 @@ package CBLiteTester;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.sun.javafx.fxml.builder.URLBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -37,7 +36,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -50,7 +48,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
@@ -295,7 +292,6 @@ public class MainController implements Initializable {
     private void setDefaultProperties() {
         properties.setProperty("cblite-loc", "C:\\couchbaselight/resources");
         properties.setProperty("author", "amrishraje@gmail.com");
-//        TODO do not set default for SG
         properties.setProperty("sgURL", "ws://none");
         properties.setProperty("sgCert", "none");
         properties.setProperty("sgDB", "none");
@@ -347,44 +343,44 @@ public class MainController implements Initializable {
             }
         }
         if (!properties.getProperty("sgAdminURL", "").isBlank() && !channelsSet) {
-            channelsSet = true;
-            Gson gson = new Gson();
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
-            String adminUrl = properties.getProperty("sgAdminURL") + "/"
-                    + properties.getProperty("sgDB") + "/_user/"
-                    + userText.getText();
-//            HttpUrl adminUrl = new HttpUrl.Builder()
-////                    .scheme("https")
-//                    .host(properties.getProperty("sgAdminURL"))
-//                    .addPathSegments("syncdb").addPathSegment("_user")
-//                    .addPathSegment("99490041").build();
-            logger.info("Built url is: " + adminUrl);
-            Request request = new Request.Builder()
-//                    todo build proper url
-                    .url("***REMOVED***/syncdb/_user/99490041")
-                    .method("GET", null)
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Authorization", "Basic c3luY0FkbWluOnBlcHNpY28xMjM=")
-                    .build();
-            try {
-                Response response = client.newCall(request).execute();
-                JsonObject responseJson = gson.fromJson(response.body().string(), JsonObject.class);
-                if (response.isSuccessful()) {
-                    responseJson.get("all_channels").getAsJsonArray().iterator().forEachRemaining(jsonElement -> {
-                        channelsComboBoxList.getItems().add(jsonElement.getAsString());
-                    });
+            if (!userText.getText().isBlank()) callSyncGw();
+        }
+    }
+
+    private void callSyncGw() {
+        channelsSet = true;
+        Gson gson = new Gson();
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        String adminUrl = properties.getProperty("sgAdminURL") + "/"
+                + properties.getProperty("sgDB") + "/_user/"
+                + userText.getText();
+        Request request = new Request.Builder()
+                .url(adminUrl)
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+//                    TODO provide a way to authenticate against SG admin url. Currently there is no UI to get pwd
+//                .addHeader("Authorization", "Basic c3luY0FkbWluOnBlcHNpY28xMjM=")
+                .addHeader("Authorization", properties.getProperty("sgAdminAuth", "Basic c3luY0FkbWluOnBlcHNpY28xMjM="))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            JsonObject responseJson = gson.fromJson(response.body().string(), JsonObject.class);
+            if (response.isSuccessful()) {
+                responseJson.get("all_channels").getAsJsonArray().iterator().forEachRemaining(jsonElement -> {
+                    channelsComboBoxList.getItems().add(jsonElement.getAsString());
+                });
+            } else {
+                if (response.code() == 404 && responseJson.get("reason").getAsString().equals("missing")) {
+                    logger.info("User not found");
                 } else {
-                    if (response.code() == 404 && responseJson.get("reason").getAsString().equals("missing")){
-                        logger.info("User not found");
-                    } else {
                     logger.error("Call to _user API failed");
                     logger.error("Response: " + response);
-                    }
                 }
-            } catch (IOException e) {
-                logger.error("Unable to call Sync Gateway _user API to get channels: " + e.getMessage());
             }
+            response.close();
+        } catch (IOException e) {
+            logger.error("Unable to call Sync Gateway _user API to get channels: " + e.getMessage());
         }
     }
 }
