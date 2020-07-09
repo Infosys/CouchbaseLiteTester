@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package CBLiteTester;
+package io.amrishraje.cblitetester;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.google.gson.Gson;
@@ -172,9 +172,9 @@ public class MainController implements Initializable {
     public void populateTable(boolean fullDoc) {
         tableStatusLabel.setText("Loading table from CBLite DB...");
 //        TODO implement platform.runlater
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
+//        Platform.runLater(new Runnable() {
+//            @Override
+//            public void run() {
                 try {
                     cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData(fullDoc);
                 } catch (CouchbaseLiteException e) {
@@ -195,7 +195,6 @@ public class MainController implements Initializable {
                 });
 
                 ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
-//        TODO test out filtering
                 FilteredList<Map.Entry<String, String>> filteredData = new FilteredList<>(items, p -> true);
                 tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
                     filteredData.setPredicate(tableData -> {
@@ -238,9 +237,8 @@ public class MainController implements Initializable {
                     });
                     return row;
                 });
-                showStatusForTable("");
-            }
-        });
+//            }
+//        });
     }
 
     private void showStatusForTable(String message) {
@@ -327,12 +325,7 @@ public class MainController implements Initializable {
     }
 
     public void loadFullDocument(MouseEvent mouseEvent) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                populateTable(loadFullDocSwitch.isSelected());
-            }
-        });
+        populateTable(loadFullDocSwitch.isSelected());
     }
 
     public void setUpChannels(MouseEvent mouseEvent) {

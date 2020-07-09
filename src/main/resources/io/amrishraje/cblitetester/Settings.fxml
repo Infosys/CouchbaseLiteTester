@@ -25,7 +25,7 @@
   ~ limitations under the License.
   -->
 
-<AnchorPane fx:id="settingsPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CBLiteTester.SettingsController">
+<AnchorPane fx:id="settingsPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.amrishraje.cblitetester.SettingsController">
    <children>
       <VBox spacing="15.0">
          <children>

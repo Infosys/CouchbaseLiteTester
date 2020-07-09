@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package CBLiteTester;
+package io.amrishraje.cblitetester;
 
 import com.couchbase.lite.*;
 import javafx.application.Platform;
@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -191,16 +190,12 @@ public class SyncController {
                 SelectResult.expression(Meta.id))
                 .from(DataSource.database(database));
         ResultSet resultFull = queryAll.execute();
-        List<Result> results = resultFull.allResults();
-        Result ts;
-        Iterator iterator = results.iterator();
-        while (iterator.hasNext()) {
-            ts = (Result) iterator.next();
-//            TODO optimization - this is taking for ever to load 1k docs. Implement pagination or filtering
+
+        for (Result result: resultFull){
             if (fullDoc)
-                cbData.put(ts.getString("id"), ts.toList().get(0).toString());
+                cbData.put(result.getString("id"), result.toList().get(0).toString());
             else
-                cbData.put(ts.getString("id"), "Click to load document...");
+                cbData.put(result.getString("id"), "Click to load document...");
         }
         logger.info("total number of records are :" + cbData.size());
         return cbData;

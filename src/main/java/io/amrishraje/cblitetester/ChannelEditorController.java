@@ -13,10 +13,9 @@
  * limitations under the License.
  */
 
-package CBLiteTester;
+package io.amrishraje.cblitetester;
 
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
