@@ -3,6 +3,7 @@
 ######################
 /target/classes/
 /src/test/javascript/coverage/
+defaults.xml
 
 ######################
 # Node

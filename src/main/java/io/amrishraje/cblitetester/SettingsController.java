@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package CBLiteTester;
+package io.amrishraje.cblitetester;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
