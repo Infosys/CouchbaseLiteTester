@@ -16,23 +16,22 @@
 package io.amrishraje.cblitetester;
 
 import com.couchbase.lite.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.MalformedJsonException;
 import javafx.application.Platform;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class SyncController {
-    private static final Log logger = LogFactory.getLog(SyncController.class);
+    private static final Logger logger = LoggerFactory.getLogger(SyncController.class);
     private static Properties properties;
     static {
         try {
@@ -190,10 +189,12 @@ public class SyncController {
                 SelectResult.expression(Meta.id))
                 .from(DataSource.database(database));
         ResultSet resultFull = queryAll.execute();
+        Gson gson = new Gson();
 
         for (Result result: resultFull){
             if (fullDoc)
-                cbData.put(result.getString("id"), result.toList().get(0).toString());
+//                cbData.put(result.getString("id"), result.toList().get(0).toString());
+                cbData.put(result.getString("id"), gson.toJson(result.toMap().get(DB_NAME)));
             else
                 cbData.put(result.getString("id"), "Click to load document...");
         }
@@ -203,7 +204,23 @@ public class SyncController {
 
     public static String getCBLiteDocument(String docId) throws CouchbaseLiteException{
         Document doc = database.getDocument(docId);
-        return doc.toMap().toString();
+        Gson gson = new Gson();
+        String json = gson.toJson(doc.toMap());
+        return json;
+    }
+
+    public static void setCBLiteDocument(String key, String value) throws JsonSyntaxException {
+//        todo fix this method to save whole doc
+        Document doc = database.getDocument(key);
+        MutableDocument mutableDocument = doc.toMutable();
+        Gson gson = new Gson();
+        Map dataMap = gson.fromJson(value, Map.class);
+        mutableDocument.setData(dataMap);
+        try {
+            database.save(mutableDocument);
+        } catch (CouchbaseLiteException e) {
+            logger.info("Unable to save doc {}",key);
+        }
     }
 
     private static void loadProperties() {

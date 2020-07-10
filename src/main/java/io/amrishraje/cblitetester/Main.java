@@ -23,12 +23,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class Main extends Application {
 
-    private static final Log logger = LogFactory.getLog(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
     @Override
     public void start(Stage primaryStage) throws Exception {
         System.out.println("=============================================================================");
@@ -37,7 +39,7 @@ public class Main extends Application {
         System.out.println("Repo: https://github.com/amrishraje/CBLiteTester");
         System.out.println("License: https://github.com/amrishraje/CBLiteTester/blob/master/LICENSE");
         System.out.println("=============================================================================");
-        Parent root = FXMLLoader.load(getClass().getResource("CBLiteScreen.fxml"));
+        Parent root = loadFXML("CBLiteScreen");
         primaryStage.setTitle("Couchbase Lite Sync");
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.show();
@@ -50,6 +52,12 @@ public class Main extends Application {
             }
         });
     }
+
+    private static Parent loadFXML(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"));
+        return fxmlLoader.load();
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
