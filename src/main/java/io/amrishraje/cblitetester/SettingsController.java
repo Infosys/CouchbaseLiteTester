@@ -24,8 +24,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class SettingsController implements Initializable {
-    private static final Log logger = LogFactory.getLog(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
     public ComboBox sgScheme;
     public TextField sgURL;
     public TextField sgPort;

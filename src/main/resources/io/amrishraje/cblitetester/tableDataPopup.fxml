@@ -36,14 +36,6 @@
       </AnchorPane>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
          <children>
-            <AnchorPane prefHeight="45.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <Label fx:id="docIdLabel" text="Document Id" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="10.0">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-               </children></AnchorPane>
             <AnchorPane prefHeight="355.0" prefWidth="600.0" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="45.0">
                <children>
                   <TextArea fx:id="dataTextArea" prefHeight="265.0" prefWidth="580.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
@@ -54,13 +46,26 @@
                   <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="15.0">
                     <buttons>
                       <Button fx:id="editCancelButton" cancelButton="true" mnemonicParsing="false" onAction="#cancelEdit" text="Cancel" />
-                        <Button defaultButton="true" mnemonicParsing="false" text="Save" />
+                        <Button fx:id="documentSaveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveEditedDocument" text="Save" />
                     </buttons>
                   </ButtonBar>
                   <TextField fx:id="searchField" layoutX="10.0" layoutY="11.0" onAction="#searchHandler" prefHeight="25.0" prefWidth="229.0" promptText="Search..." AnchorPane.leftAnchor="10.0" />
                   <Button fx:id="searchButton" layoutX="248.0" layoutY="11.0" mnemonicParsing="false" onAction="#searchHandler" text="Search" />
                </children>
             </AnchorPane>
+            <AnchorPane prefHeight="45.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <TextField fx:id="docIdLabel" editable="false" focusTraversable="false" layoutX="14.0" layoutY="10.0" prefHeight="26.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-background-insets: 0px;" AnchorPane.leftAnchor="0.0">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </TextField>
+                  <Label fx:id="saveStatusLabel" layoutX="201.0" layoutY="14.0" prefHeight="18.0" textFill="RED" AnchorPane.rightAnchor="15.0">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+               </children></AnchorPane>
          </children>
       </AnchorPane>
    </children>

@@ -17,6 +17,8 @@ package io.amrishraje.cblitetester;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,16 +26,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataPopupController {
 
-    private static final Log logger = LogFactory.getLog(DataPopupController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataPopupController.class);
     public TextField searchField;
     public Button searchButton;
-    public Label docIdLabel;
+    public TextField docIdLabel;
     public Button editCancelButton;
+    public Button documentSaveButton;
+    public Label saveStatusLabel;
     int fromIndex = 0;
     @FXML
     private TextArea dataTextArea;
@@ -45,14 +49,13 @@ public class DataPopupController {
     }
 
     public void loadDataTextArea(String docId, String data) {
-        dataTextArea.setText(data);
+        dataTextArea.setText(formatData(data));
         docIdLabel.setText(docId);
     }
 
     private String formatData(String data) {
-
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson("data");
+        return gson.toJson(JsonParser.parseString(data));
     }
 
     @FXML
@@ -84,5 +87,17 @@ public class DataPopupController {
     void cancelEdit(ActionEvent event) {
         Stage stage = (Stage) editCancelButton.getScene().getWindow();
         stage.close();
+    }
+
+    public void saveEditedDocument(ActionEvent event) {
+//        Todo fix document save
+        try {
+            SyncController.setCBLiteDocument(docIdLabel.getText(), dataTextArea.getText());
+            Stage stage = (Stage) editCancelButton.getScene().getWindow();
+            stage.close();
+        } catch (JsonSyntaxException exception) {
+            saveStatusLabel.setText("Malformed JSON, please correct");
+            logger.error("Malformed JSON - {}", exception.getMessage());
+        }
     }
 }

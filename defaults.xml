@@ -14,4 +14,17 @@
     <!--    For each environment listed above, specify sgURL, sgPort, sgDB, sgScheme, sgAdminURL
     with environment name as the prefix, see sample-->
     <entry key="environments">Dev,QA</entry>
+    <!--    Dev Preferences-->
+    <entry key="Dev.sgURL">***REMOVED***</entry>
+    <entry key="Dev.sgPort">443</entry>
+    <entry key="Dev.sgDB">syncdb</entry>
+    <entry key="Dev.sgScheme">wss://</entry>
+    <entry key="Dev.sgAdminURL">***REMOVED***</entry>
+
+    <!--    QA Preferences-->
+    <entry key="QA.sgURL">***REMOVED***</entry>
+    <entry key="QA.sgPort">443</entry>
+    <entry key="QA.sgDB">syncdb</entry>
+    <entry key="QA.sgScheme">wss://</entry>
+    <entry key="QA.sgAdminURL">***REMOVED***</entry>
 </properties>
