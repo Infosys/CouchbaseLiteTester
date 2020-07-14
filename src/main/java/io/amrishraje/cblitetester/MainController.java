@@ -18,7 +18,6 @@ package io.amrishraje.cblitetester;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -65,7 +64,7 @@ public class MainController implements Initializable {
     public PasswordField pwdText;
     public Label statusLabel;
     public Button deleteSync;
-    public TableView dataTable;
+    public TableView<Map.Entry<String, String>> dataTable;
     public TableColumn<Map.Entry<String, String>, String> docId;
     public TableColumn<Map.Entry<String, String>, String> docValue;
     public SwitchButton continuousToggleRemove;
@@ -237,26 +236,30 @@ public class MainController implements Initializable {
                         } catch (CouchbaseLiteException e) {
                             logger.error("Error reading doc " + dataValue.getValue() + " from CBLite DB");
                         }
-                        showDataPopup(dataValue.getKey(), document);
+                        showDataPopup(dataValue.getKey(), document, row.getIndex());
                     } else
-                        showDataPopup(dataValue.getKey(), dataValue.getValue());
+                        showDataPopup(dataValue.getKey(), dataValue.getValue(), row.getIndex());
                 }
             });
             return row;
         });
     }
 
-
-    private void showStatusForTable(String message) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                tableStatusLabel.setText(message);
-            }
-        });
+    public void refreshTable(String docVal, int tableIndex) {
+        dataTable.getItems().get(tableIndex).setValue(docVal);
+        dataTable.refresh();
     }
 
-    private void showDataPopup(String key, String value) {
+//    private void showStatusForTable(String message) {
+//        Platform.runLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                tableStatusLabel.setText(message);
+//            }
+//        });
+//    }
+
+    private void showDataPopup(String key, String value, int index) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("tableDataPopup.fxml"));
             Parent dataRoot = (Parent) fxmlLoader.load();
@@ -264,7 +267,7 @@ public class MainController implements Initializable {
             stage.setTitle("Data Viewer");
             stage.setScene(new Scene(dataRoot, 800, 500));
             DataPopupController dataPopupController = fxmlLoader.getController();
-            dataPopupController.loadDataTextArea(key, value);
+            dataPopupController.loadDataTextArea(key, value, this, index);
             stage.show();
         } catch (Exception e) {
             logger.error("Error loading tableDataPopup.fxml", e);
