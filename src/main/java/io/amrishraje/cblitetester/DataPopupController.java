@@ -39,6 +39,8 @@ public class DataPopupController {
     public Button documentSaveButton;
     public Label saveStatusLabel;
     int fromIndex = 0;
+    MainController mainController;
+    int tableIndex;
     @FXML
     private TextArea dataTextArea;
     private String holdSearchText;
@@ -48,13 +50,20 @@ public class DataPopupController {
 
     }
 
-    public void loadDataTextArea(String docId, String data) {
+    public void loadDataTextArea(String docId, String data, MainController mainController1, int index) {
         dataTextArea.setText(formatData(data));
         docIdLabel.setText(docId);
+        this.mainController = mainController1;
+        tableIndex = index;
     }
 
     private String formatData(String data) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(JsonParser.parseString(data));
+    }
+
+    private String minifyData(String data) {
+        Gson gson = new Gson();
         return gson.toJson(JsonParser.parseString(data));
     }
 
@@ -90,9 +99,10 @@ public class DataPopupController {
     }
 
     public void saveEditedDocument(ActionEvent event) {
-//        Todo fix document save
+//        Todo - refresh table after save
         try {
             SyncController.setCBLiteDocument(docIdLabel.getText(), dataTextArea.getText());
+            mainController.refreshTable(minifyData(dataTextArea.getText()), tableIndex);
             Stage stage = (Stage) editCancelButton.getScene().getWindow();
             stage.close();
         } catch (JsonSyntaxException exception) {
