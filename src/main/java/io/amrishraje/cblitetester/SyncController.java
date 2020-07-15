@@ -17,18 +17,22 @@ package io.amrishraje.cblitetester;
 
 import com.couchbase.lite.*;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.MalformedJsonException;
 import javafx.application.Platform;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class SyncController {
     private static final Logger logger = LoggerFactory.getLogger(SyncController.class);
@@ -48,6 +52,7 @@ public class SyncController {
     public static String SYNC_GATEWAY_URL = properties.getProperty("sgURL");
     private static Database database;
     private static Replicator replicator;
+    private static ReplicatorConfiguration replicatorConfig;
 
 
     public static Database getDatabase() {
@@ -68,7 +73,7 @@ public class SyncController {
         logger.info("CbLite file has been created and database has been initialized");
     }
 
-    public static void startReplicator(String user, String pwd, boolean isContinuous, List<String> channels, MainController controller) {
+    public static void startReplicator(String user, String pwd, boolean isContinuous, List<String> channels, String replicationMode, MainController controller) {
         logger.debug("calling startReplicator");
         logger.debug("syncing channels: " + channels);
         mainController = controller;
@@ -81,10 +86,23 @@ public class SyncController {
         } catch (URISyntaxException e) {
             logger.info("Bad Sync URL", e);
         }
-        ReplicatorConfiguration replicatorConfig = new ReplicatorConfiguration(database, targetEndpoint);
-        replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+        replicatorConfig = new ReplicatorConfiguration(database, targetEndpoint);
+        logger.debug("Replication Mode is {}", replicationMode);
+        switch (replicationMode) {
+            case "Push":
+                replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH);
+                break;
+            case "Pull and Push":
+                replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+                break;
+            case "Pull":
+            default:
+                replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+                break;
+        }
 //        Do not replicate deleted docs!
         replicatorConfig.setPullFilter((document, flags) -> !flags.contains(DocumentFlag.DocumentFlagsDeleted));
+        replicatorConfig.setPushFilter((document, flags) -> !flags.contains(DocumentFlag.DocumentFlagsDeleted));
 
 //      Set sync channels
         replicatorConfig.setChannels(channels);
@@ -149,12 +167,27 @@ public class SyncController {
         isReplicatorStarted = true;
     }
 
-    public static String getSyncStatus() {
-        return replicator.getStatus().getActivityLevel().toString();
-    }
+//    public static String getSyncStatus() {
+//        return replicator.getStatus().getActivityLevel().toString();
+//    }
 
-    public static void onDemandSync() {
+    public static void onDemandSync(boolean isContinuous, List<String> channels, String replicationMode) {
         logger.info(" starting onDemandSync");
+        if (isContinuous) replicatorConfig.setContinuous(true);
+        else replicatorConfig.setContinuous(false);
+        replicatorConfig.setChannels(channels);
+        switch (replicationMode) {
+            case "Push":
+                replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH);
+                break;
+            case "Pull and Push":
+                replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+                break;
+            case "Pull":
+            default:
+                replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+                break;
+        }
         replicator.start();
     }
 

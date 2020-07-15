@@ -62,11 +62,12 @@ public class SettingsController implements Initializable {
 
     @FXML
     void environmentAction(ActionEvent event) {
-        sgURL.setText(defaults.getProperty(environment.getValue() + ".sgURL","undefined"));
-        sgPort.setText(defaults.getProperty(environment.getValue() + ".sgPort","undefined"));
-        sgDB.setText(defaults.getProperty(environment.getValue() + ".sgDB","undefined"));
-        sgScheme.setValue(defaults.getProperty(environment.getValue() + ".sgScheme","undefined"));
-        sgAdminText.setText(defaults.getProperty(environment.getValue() + ".sgAdminURL","undefined"));
+        sgURL.setText(defaults.getProperty(environment.getValue() + ".sgURL", "undefined"));
+        sgPort.setText(defaults.getProperty(environment.getValue() + ".sgPort", "undefined"));
+        sgDB.setText(defaults.getProperty(environment.getValue() + ".sgDB", "undefined"));
+        sgScheme.setValue(defaults.getProperty(environment.getValue() + ".sgScheme", "undefined"));
+        sgAdminText.setText(defaults.getProperty(environment.getValue() + ".sgAdminURL", "undefined"));
+        sgCertText.setText("");
     }
 
     @FXML
@@ -138,9 +139,25 @@ public class SettingsController implements Initializable {
         } catch (IOException e) {
             logger.error("Error reading config file", e);
         }
-//        environment.setItems(FXCollections.observableArrayList("Dev", "QA", "Perf", "POC"));
         String environments[] = defaults.getProperty("environments").split(",");
         environment.setItems(FXCollections.observableArrayList(environments));
         sgScheme.setItems(FXCollections.observableArrayList("ws://", "wss://"));
+//      Setup previous settings from config.xml file
+        loadDefaultsFromConfigXml();
+    }
+
+    private void loadDefaultsFromConfigXml() {
+        if (!properties.getProperty("sgDB").equals("none")) {
+            String syncScheme = properties.getProperty("sgURL").split("://")[0];
+            String syncURL = properties.getProperty("sgURL").split("://")[1].split(":")[0];
+            String syncPort = properties.getProperty("sgURL").split("://")[1].split(":")[1].split("/")[0];
+            sgURL.setText(syncURL);
+            sgPort.setText(syncPort);
+            sgDB.setText(properties.getProperty("sgDB"));
+            sgScheme.setValue(syncScheme + "://");
+            sgAdminText.setText(properties.getProperty("sgAdminURL"));
+            sgCertText.setText(properties.getProperty("sgCert"));
+            cbLitePath.setText(properties.getProperty("cblite-loc"));
+        }
     }
 }
