@@ -81,6 +81,7 @@ public class MainController implements Initializable {
     public ToggleSwitch continuousToggle;
     public CheckComboBox channelsComboBoxList;
     public Hyperlink about;
+    public ComboBox replicationMode;
     Properties properties = new Properties();
     @FXML
     private Button settingsButton;
@@ -90,7 +91,7 @@ public class MainController implements Initializable {
     private String user = "";
     private String pwd;
     private boolean channelsSet;
-    private String currentEnvironment;
+    private String currentEnvironment = "";
 
 
     public MainController() {
@@ -143,10 +144,13 @@ public class MainController implements Initializable {
         }
         user = localUser;
         List<String> channels = channelsComboBoxList.getCheckModel().getCheckedItems();
+        String replMode = replicationMode.getValue() == null ? "Pull" : replicationMode.getValue().toString();
         if (!SyncController.isReplicatorStarted) {
-            SyncController.startReplicator(localUser, pwd, continuousToggle.isSelected(), channels, this);
+            logger.debug("Starting Sync for the first time using startReplicator");
+            SyncController.startReplicator(localUser, pwd, continuousToggle.isSelected(), channels, replMode, this);
         } else {
-            SyncController.onDemandSync();
+            logger.debug("On demand sync requested");
+            SyncController.onDemandSync(continuousToggle.isSelected(), channels, replMode);
 //                TODO is populate data needed here?
             populateTable(false);
         }
@@ -168,6 +172,7 @@ public class MainController implements Initializable {
                 }
             }
         });
+        replicationMode.setItems(FXCollections.observableArrayList("Pull", "Push","Pull and Push"));
     }
 
     @FXML
@@ -280,7 +285,7 @@ public class MainController implements Initializable {
             in = new FileInputStream("config.xml");
             properties.loadFromXML(in);
         } catch (IOException e) {
-            logger.error("IO Exception on config file", e);
+            logger.error("Unable to open config file {}", e.getMessage());
             setupProperties();
         }
     }
@@ -350,6 +355,8 @@ public class MainController implements Initializable {
         }
 
         if (!properties.getProperty("sgAdminURL", "").equals(currentEnvironment)) {
+            logger.debug("current env {}", currentEnvironment);
+            logger.info("sgAdmin URL: {}", properties.getProperty("sgAdminURL", ""));
             if (!userText.getText().isBlank()) callSyncGw();
         }
     }
