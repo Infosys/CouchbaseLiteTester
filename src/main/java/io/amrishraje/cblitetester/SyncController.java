@@ -23,10 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -70,7 +67,7 @@ public class SyncController {
         } catch (CouchbaseLiteException e) {
             logger.info("Unable to create CBLite DB", e);
         }
-        logger.info("CbLite file has been created and database has been initialized");
+        logger.debug("CbLite file has been created and database has been initialized");
     }
 
     public static void startReplicator(String user, String pwd, boolean isContinuous, List<String> channels, String replicationMode, MainController controller) {
@@ -167,12 +164,9 @@ public class SyncController {
         isReplicatorStarted = true;
     }
 
-//    public static String getSyncStatus() {
-//        return replicator.getStatus().getActivityLevel().toString();
-//    }
-
     public static void onDemandSync(boolean isContinuous, List<String> channels, String replicationMode) {
         logger.info(" starting onDemandSync");
+        replicator.stop();
         if (isContinuous) replicatorConfig.setContinuous(true);
         else replicatorConfig.setContinuous(false);
         replicatorConfig.setChannels(channels);
@@ -188,6 +182,31 @@ public class SyncController {
                 replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
                 break;
         }
+        replicator = new Replicator(replicatorConfig);
+        replicator.addChangeListener(change -> {
+            if (change.getStatus().getError() != null) {
+                logger.error("Error replicating from Sync GW, error:  " + change.getStatus().getError().getMessage()
+                        + " " + change.getStatus().getError().getCode());
+            }
+            logger.debug("Replication Status: " + change.getStatus());
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (change.getStatus().getError() != null) {
+                        mainController.statusLabel.setText(change.getStatus().getError().getMessage());
+                        isReplicatorStarted = false;
+                    } else {
+                        mainController.statusLabel.setText("Sync Status: " + change.getStatus().getActivityLevel() +
+                                "\n" + "Synced  " + change.getStatus().getProgress().getCompleted() + "  of   " +
+                                change.getStatus().getProgress().getTotal());
+                        if (change.getStatus().getActivityLevel().equals(AbstractReplicator.ActivityLevel.STOPPED) ||
+                                change.getStatus().getActivityLevel().equals(AbstractReplicator.ActivityLevel.IDLE)) {
+                            mainController.populateTable(false);
+                        }
+                    }
+                }
+            });
+        });
         replicator.start();
     }
 
@@ -200,7 +219,7 @@ public class SyncController {
     }
 
     public static void stopAndDeleteDB() {
-        logger.info("- Deleting CBLite DB file");
+        logger.debug("- Deleting CBLite DB file");
         if (database != null) {
             try {
                 stopReplication();
@@ -209,7 +228,8 @@ public class SyncController {
                 database.close();
                 database = null;
                 isReplicatorStarted = false;
-                logger.info("CBLite file deleted...");
+                logger.debug("CBLite file deleted...");
+                logger.info("Replication Stopped and CBLite DB Deleted");
             } catch (CouchbaseLiteException | InterruptedException ex) {
                 logger.error("stopAndDeleteDB", ex);
             }

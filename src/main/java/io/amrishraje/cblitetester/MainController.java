@@ -355,8 +355,7 @@ public class MainController implements Initializable {
         }
 
         if (!properties.getProperty("sgAdminURL", "").equals(currentEnvironment)) {
-            logger.debug("current env {}", currentEnvironment);
-            logger.info("sgAdmin URL: {}", properties.getProperty("sgAdminURL", ""));
+            logger.debug("sgAdmin URL: {}", properties.getProperty("sgAdminURL", ""));
             if (!userText.getText().isBlank()) callSyncGw();
         }
     }
@@ -375,7 +374,6 @@ public class MainController implements Initializable {
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
 //                    TODO provide a way to authenticate against SG admin url. Currently there is no UI to get pwd
-//                .addHeader("Authorization", "Basic ***REMOVED***")
                 .addHeader("Authorization", properties.getProperty("sgAdminAuth", "Basic ***REMOVED***"))
                 .build();
         try {
