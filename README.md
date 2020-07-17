@@ -32,7 +32,7 @@ settings pane to display a dropdown of various environments and their correspond
 * Support for searching data within a document
 * Support for multiple Sync Gateways in different environments e.g. Dev, QA, Prod etc
 * Support for deleting and initializing local CBLite DB
-* Support to show a list of available channels and sync with one or more specified channels that a user has access to
+* Support to show a list of available channels and sync with one or more specified channels
 * Support to edit data in the UI and do 'push' replication to sync gateway
 
 ## Future roadmap 
