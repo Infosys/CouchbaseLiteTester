@@ -7,14 +7,23 @@ Download from git and import into your IDE of choice.
 ```
 git clone https://github.com/amrishraje/CBLiteTester.git  
 ```
-Build and run from your IDE. 
+Build and run from your IDE using method of your choice. 
 
+#####Build using maven
+```
+mvn javafx:run
+``` 
+#####Build a fat JAR for distribution
+```
+mvn compile package
+```
+This will create a distributable JAR file in build folder. Package an appropriate defaults.xml file along with your jar file with appropriate environments setup.  
 
-Tips: 
+###Tips: 
 * You can define multiple environments in the defaults.xml file. This will automatically be picked up by the
 settings pane to display a dropdown of various environments and their corresponding Sync Gateways.
 * All channels that a user has access to will be automatically listed in the Sync Channels drop down. This requires Sync Gateway Admin URL to be explicitly specified and admin APIs to be exposed outside the Sync Gateway VM. This is dangerous - do not do this unless you know what you are doing.
-* You may put a reverse proxy like NGINX in front of SG to protect it. If your sync gateway Admin URL requires authentication, it can be supplied by adding below property in config.xml file
+* You may put a reverse proxy like NGINX in front of SG to protect it or use SSH Tunneling. If your sync gateway Admin URL requires authentication, it can be supplied by adding below property in config.xml file
 ```
 <entry key="sgAdminAuth">Basic encodedCredentials</entry>
 ``` 
@@ -34,6 +43,7 @@ settings pane to display a dropdown of various environments and their correspond
 * Support for deleting and initializing local CBLite DB
 * Support to show a list of available channels and sync with one or more specified channels
 * Support to edit data in the UI and do 'push' replication to sync gateway
+* Fat JAR for distribution (tested on windows 10 with java 11.0.4)
 
 ## Future roadmap 
 * Support to search documents based on specified criteria
