@@ -83,6 +83,7 @@ public class MainController implements Initializable {
     public Hyperlink about;
     public ComboBox replicationMode;
     Properties properties = new Properties();
+    Properties defaults = new Properties();
     @FXML
     private Button settingsButton;
     @FXML
@@ -159,6 +160,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         readProperties();
+        readDefaults();
         SyncController.createLocalCBLiteFile();
         populateTable(false);
         channelsComboBoxList.getCheckModel().getCheckedItems().addListener((ListChangeListener) change -> {
@@ -308,6 +310,34 @@ public class MainController implements Initializable {
         properties.setProperty("sgURL", "ws://none");
         properties.setProperty("sgCert", "none");
         properties.setProperty("sgDB", "none");
+    }
+
+    private void readDefaults() {
+        FileInputStream in;
+        try {
+            in = new FileInputStream("defaults.xml");
+            defaults.loadFromXML(in);
+        } catch (IOException e) {
+            logger.error("Unable to open defaults.xml file {}", e.getMessage());
+            setupDefaults();
+        }
+    }
+
+    private void setupDefaults() {
+        logger.error("Bad defaults file, reloading defaults");
+        try {
+            File defaultsFile = new File("defaults.xml");
+            FileOutputStream out = new FileOutputStream(defaultsFile);
+            defaults.setProperty("environments", "xxx,yyy");
+            defaults.setProperty("xxx.sgURL", "example.com");
+            defaults.setProperty("xxx.sgPort", "443");
+            defaults.setProperty("xxx.sgDB", "syncdb");
+            defaults.setProperty("xxx.sgScheme", "wss://");
+            defaults.setProperty("xxx.sgAdminURL", "example.com:4985");
+            defaults.storeToXML(out, "Configuration");
+        } catch (IOException e) {
+            logger.error("Exception writing defaults file", e);
+        }
     }
 
     public void deleteDB(ActionEvent actionEvent) {
