@@ -3,12 +3,12 @@
 <properties>
     <comment>Configuration</comment>
     <!--    Sample Entry-->
-    <!--    <entry key="environments">xxx,yyy</entry>-->
-    <!--    <entry key="xxx.sgURL">host.com</entry>-->
-    <!--    <entry key="xxx.sgPort">443</entry>-->
-    <!--    <entry key="xxx.sgDB">syncdb</entry>-->
-    <!--    <entry key="xxx.sgScheme">wss://</entry>-->
-    <!--    <entry key="xxx.sgAdminURL">host.com:4985</entry>    -->
+    <entry key="environments">xxx,yyy</entry>
+    <entry key="xxx.sgURL">example.com</entry>
+    <entry key="xxx.sgPort">443</entry>
+    <entry key="xxx.sgDB">syncdb</entry>
+    <entry key="xxx.sgScheme">wss://</entry>
+    <entry key="xxx.sgAdminURL">example.com:4985</entry>
 
     <!--    Comma separated list of environments to be listed in settings environment drop down list-->
     <!--    For each environment listed above, specify sgURL, sgPort, sgDB, sgScheme, sgAdminURL
