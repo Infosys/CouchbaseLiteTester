@@ -27,7 +27,7 @@
         <maven.compiler.release>11</maven.compiler.release>
         <javafx.version>13</javafx.version>
     </properties>
-    <name>cblite-tester</name>
+    <name>CBLite-tester</name>
     <build>
         <plugins>
             <plugin>
