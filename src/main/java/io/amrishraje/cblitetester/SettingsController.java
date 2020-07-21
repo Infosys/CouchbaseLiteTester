@@ -105,7 +105,7 @@ public class SettingsController implements Initializable {
         properties.setProperty("sgURL", sgURLValue);
         properties.setProperty("sgDB", sgDB.getText());
         properties.setProperty("cblite-loc", cbLitePath.getText());
-        properties.setProperty("sgAdminURL", sgAdminText.getText());
+        properties.setProperty("sgAdminURL", sgAdminText.getText() == null? "":sgAdminText.getText());
         if (sgScheme.getValue().toString().contains("wss")) {
             if (sgCertText.getText().isBlank()) {
                 sgSettingsErrLabel.setText("Certificate is required for wss scheme. Hint: Browse to SG URL and download cert");
