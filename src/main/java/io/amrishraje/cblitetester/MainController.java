@@ -347,9 +347,10 @@ public class MainController implements Initializable {
     public void initSync(ActionEvent actionEvent) {
         SyncController.stopAndDeleteDB();
         SyncController.createLocalCBLiteFile();
-        user = "";
-        statusLabel.setText("Initialization Complete, you may sync again");
         populateTable(false);
+        user = "";
+        startSync(null);
+//        statusLabel.setText("Initialization Complete, you may sync again");
     }
 
     @FXML
