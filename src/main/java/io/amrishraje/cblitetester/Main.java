@@ -17,12 +17,10 @@ package io.amrishraje.cblitetester;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +31,7 @@ public class Main extends Application {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     @Override
     public void start(Stage primaryStage) throws Exception {
+        logger.debug("Starting CBLite Application...");
         System.out.println("=============================================================================");
         System.out.println("Couchbase CBLite Tester");
         System.out.println("Author: Amrish Raje");
@@ -43,13 +42,10 @@ public class Main extends Application {
         primaryStage.setTitle("Couchbase Lite Sync");
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.show();
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent t) {
-                SyncController.stopReplication();
-                Platform.exit();
-                System.exit(0);
-            }
+        primaryStage.setOnCloseRequest(t -> {
+            SyncController.stopReplication();
+            Platform.exit();
+            System.exit(0);
         });
     }
 
