@@ -35,7 +35,7 @@
          <children>
             <AnchorPane prefHeight="575.0" prefWidth="250.0" style="-fx-background-color: #555555; -fx-border-color: #333333;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <TextField fx:id="userText" layoutX="39.0" layoutY="53.0" onAction="#startSync" prefHeight="25.0" prefWidth="200.0" promptText="User" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="userText" layoutX="39.0" layoutY="53.0" onAction="#startSync" onMouseClicked="#resetChannels" prefHeight="25.0" prefWidth="200.0" promptText="User" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
                   <PasswordField fx:id="pwdText" layoutX="38.0" layoutY="106.0" onAction="#startSync" prefWidth="200.0" promptText="Password" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
                   <Button fx:id="syncButton" layoutX="50.0" layoutY="152.0" mnemonicParsing="false" onAction="#startSync" prefWidth="100.0" text="Sync" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="195.0">
                      <tooltip>
