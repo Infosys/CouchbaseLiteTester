@@ -67,7 +67,6 @@ public class MainController implements Initializable {
     public TableView<Map.Entry<String, String>> dataTable;
     public TableColumn<Map.Entry<String, String>, String> docId;
     public TableColumn<Map.Entry<String, String>, String> docValue;
-    public SwitchButton continuousToggleRemove;
     public Button initSync;
     public Button reloadTable;
     public Button stopSync;
@@ -75,7 +74,6 @@ public class MainController implements Initializable {
     public TextField tableSearchText;
     @FXML
     public TextField sgURL;
-    //    public ComboBox channelsComboBox;
     public AnchorPane tableAnchorPane;
     public ToggleSwitch loadFullDocSwitch;
     public ToggleSwitch continuousToggle;
