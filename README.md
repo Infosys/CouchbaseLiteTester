@@ -35,6 +35,8 @@ settings pane to display a dropdown of various environments and their correspond
 ``` 
 
 ## Features
+###### version 1.2
+* Support for loading data from another CBLite DB (Change CBLite location in settings and click Reload Table)
 ###### version 1.1
 * Fat JAR for distribution (tested on windows 10 with java 11.0.4)
 ###### version 1.0
