@@ -39,7 +39,7 @@ public class Main extends Application {
         System.out.println("License: https://github.com/amrishraje/CBLiteTester/blob/master/LICENSE");
         System.out.println("=============================================================================");
         Parent root = loadFXML("CBLiteScreen");
-        primaryStage.setTitle("Couchbase Lite Sync");
+        primaryStage.setTitle("Couchbase Lite Sync Tester");
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.show();
         primaryStage.setOnCloseRequest(t -> {

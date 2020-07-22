@@ -34,9 +34,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.input.InputMethodEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -179,7 +176,11 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void populateTable(ActionEvent event) {
+    public void reloadTable(ActionEvent event) {
+        logger.info("Refresh Table called");
+        SyncController.stopReplication();
+        SyncController.setIsReplicatorStarted(false);
+        SyncController.createLocalCBLiteFile();
         populateTable(false);
         loadFullDocSwitch.setSelected(false);
     }
@@ -342,13 +343,21 @@ public class MainController implements Initializable {
     }
 
     public void deleteDB(ActionEvent actionEvent) {
-        SyncController.stopAndDeleteDB();
-        statusLabel.setText("CBLite DB Deleted");
-        populateTable(false);
+        try {
+            SyncController.stopAndDeleteDB();
+            statusLabel.setText("CBLite DB Deleted");
+            populateTable(false);
+        } catch (CouchbaseLiteException | InterruptedException e) {
+            statusLabel.setText("Unable to delete CBLite DB, try restarting the app");
+        }
     }
 
     public void initSync(ActionEvent actionEvent) {
-        SyncController.stopAndDeleteDB();
+        try {
+            SyncController.stopAndDeleteDB();
+        } catch (CouchbaseLiteException | InterruptedException e) {
+            statusLabel.setText("Error Initializing, try restarting the app");
+        }
         SyncController.createLocalCBLiteFile();
         populateTable(false);
         user = "";
@@ -447,5 +456,4 @@ public class MainController implements Initializable {
         channelsComboBoxList.getItems().clear();
         channelsSet = false;
     }
-
 }
