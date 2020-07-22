@@ -23,7 +23,10 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -39,18 +42,22 @@ public class SyncController {
             properties = new Properties();
             properties.loadFromXML(new FileInputStream("config.xml"));
         } catch (IOException e) {
-            logger.error("Error in static block", e);
+            logger.error("Error in static block while reading config file", e);
         }
     }
     public static MainController mainController;
     public static boolean isReplicatorStarted = false;
-    public static final String DB_NAME = properties.getProperty("sgDB", "syncdb");
-    public static final String DB_PATH = properties.getProperty("cblite-loc");
+
+    public static void setIsReplicatorStarted(boolean isReplicatorStarted) {
+        SyncController.isReplicatorStarted = isReplicatorStarted;
+    }
+
+    public static String DB_NAME = properties.getProperty("sgDB", "syncdb");
+    public static String DB_PATH = properties.getProperty("cblite-loc");
     public static String SYNC_GATEWAY_URL = properties.getProperty("sgURL");
     private static Database database;
     private static Replicator replicator;
     private static ReplicatorConfiguration replicatorConfig;
-
 
     public static Database getDatabase() {
         return database;
@@ -61,6 +68,7 @@ public class SyncController {
         CouchbaseLite.init();
         // Get the database (and create it if it doesn't exist).
         DatabaseConfiguration config = new DatabaseConfiguration();
+        loadProperties();
         config.setDirectory(DB_PATH);
         try {
             SyncController.database = new Database(DB_NAME, config);
@@ -218,7 +226,7 @@ public class SyncController {
         }
     }
 
-    public static void stopAndDeleteDB() {
+    public static void stopAndDeleteDB() throws CouchbaseLiteException, InterruptedException {
         logger.debug("- Deleting CBLite DB file");
         if (database != null) {
             try {
@@ -231,7 +239,8 @@ public class SyncController {
                 logger.debug("CBLite file deleted...");
                 logger.info("Replication Stopped and CBLite DB Deleted");
             } catch (CouchbaseLiteException | InterruptedException ex) {
-                logger.error("stopAndDeleteDB", ex);
+                logger.error("Unable to delete CBLite DB", ex);
+                throw ex;
             }
         }
     }
@@ -278,10 +287,12 @@ public class SyncController {
 
     private static void loadProperties() {
         try {
-//            properties = new Properties();
             properties.loadFromXML(new FileInputStream("config.xml"));
+            DB_NAME = properties.getProperty("sgDB", "syncdb");
+            DB_PATH = properties.getProperty("cblite-loc");
+            SYNC_GATEWAY_URL = properties.getProperty("sgURL");
         } catch (IOException e) {
-            logger.error("Error in static block", e);
+            logger.error("Error loading config file", e);
         }
     }
 }
