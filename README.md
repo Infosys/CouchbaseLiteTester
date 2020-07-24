@@ -1,6 +1,6 @@
 # CBLiteTester 
 ###### version 1.2
-This app provides a UI to create a local Couchbase Lite DB and Sync Data to the DB from a Couchbase Sync Gateway. Details on how to use the tool and its features is available in this [blog](https://amrishraje.github.io/CBLiteTester.html).
+This app provides a UI to create a local Couchbase Lite DB and Sync Data to the DB from a Couchbase Sync Gateway. It provides features to search for documents in the CBLite DB, selectively sync certain channels and supports both Pull and Push replication.
 
 ## Getting Started
 For your convenience, I have uploaded a pre-built binary to the [Releases](https://github.com/amrishraje/CBLiteTester/releases) tab. Currently, the binary is tested for Windows only.
