@@ -1,6 +1,6 @@
 # CBLiteTester 
-###### version 1.1
-This app provides a UI to create a local Couchbase Lite DB and Sync Data to the DB from a Couchbase Sync Gateway. 
+###### version 1.2
+This app provides a UI to create a local Couchbase Lite DB and Sync Data to the DB from a Couchbase Sync Gateway. Details on how to use the tool and its features is available in this [blog](https://amrishraje.github.io/CBLiteTester.html).
 
 ## Getting Started
 For your convenience, I have uploaded a pre-built binary to the [Releases](https://github.com/amrishraje/CBLiteTester/releases) tab. Currently, the binary is tested for Windows only.
@@ -107,5 +107,6 @@ This will create a distributable JAR file in build folder. Package an appropriat
 * Support to create/delete users on Sync Gateway and grant access to channels
 * Support to run in headless mode as a lightweight CLI based tool with support for wss (cert pinning) which is currently lacking in the Couchbase Labs provided CBLite CLI tool
 * Support to create documents in CBLite from UI and sync up to the DB via Sync Gateway
+* Support for adding Attachments (Blobs) to Documents in CBLite Tester tool and syncing it up to the server
 * Improve performance for loading full documents in Table
 * Modular Java app with distributable package
