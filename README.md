@@ -60,5 +60,6 @@ settings pane to display a dropdown of various environments and their correspond
 * Support to create/delete users on Sync Gateway and grant access to channels
 * Support to run in headless mode as a lightweight CLI based tool with support for wss (cert pinning) which is currently lacking in the Couchbase Labs provided CBLite CLI tool
 * Support to create documents in CBLite from UI and sync up to the DB via Sync Gateway
+* Support for adding Attachments (Blobs) to Documents in CBLite Tester tool and syncing it up to the server
 * Improve performance for loading full documents in Table
 * Modular Java app with distributable package
