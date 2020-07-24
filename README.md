@@ -61,7 +61,7 @@ Click on Save to save the settings. Then click Reload Table to load the new CBLi
 
 ![Reload Table](https://github.com/amrishraje/amrishraje.github.io/blob/master/CBLiteTester_files/image008.png)
 
-##Creating a Pre-built CBLite Database image for Mobile
+## Creating a Pre-built CBLite Database image for Mobile
 The CBLite Tester can also be used to create a pre-built DB image that can be deployed on a mobile app. Simply sync data with any Sync Gateway so that the tool creates a dbname.cblite2 file. Edit documents in the tool as desired and save them. All changes will be saved to the dbname.cblite2 file. Simply copy the database file to your mobile device and all the data in the file should be available in the Couchbase Lite mobile application. Future enhancements to the tool will provide ability to add new documents and attachments (Blobs) to CBLite DB via the tool rather than having to sync from a Sync Gateway.
 
 ## Building the tool from Code
@@ -71,11 +71,11 @@ git clone https://github.com/amrishraje/CBLiteTester.git
 ```
 Build and run from your IDE using method of your choice. 
 
-#####Build using maven
+##### Build using maven
 ```
 mvn javafx:run
 ``` 
-#####Build a fat JAR for distribution
+##### Build a fat JAR for distribution
 ```
 mvn compile package
 ```
