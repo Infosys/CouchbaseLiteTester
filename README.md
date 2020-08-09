@@ -3,7 +3,7 @@
 This app provides a UI to create a local Couchbase Lite DB and Sync Data to the DB from a Couchbase Sync Gateway. It provides features to search for documents in the CBLite DB, selectively sync certain channels and supports both Pull and Push replication.
 
 ## Getting Started
-For your convenience, I have uploaded a pre-built binary to the [Releases](https://github.com/amrishraje/CBLiteTester/releases) tab. Currently, the binary is tested for Windows only.
+For your convenience, I have uploaded a pre-built binary to the [Releases](https://github.com/Infosys/CouchbaseLiteTester/releases) tab. Currently, the binary is tested for Windows only.
 > Note: Binary releases are provided for major versions. Please build from source for latest features. 
 
 Run the Binary by double clicking on the CBLiteTester.jar file or using ``java -jar CBLiteTester.jar``. Java JRE must be correctly installed on the system.
@@ -67,7 +67,7 @@ The CBLite Tester can also be used to create a pre-built DB image that can be de
 ## Building the tool from Code
 Download from git and import into your IDE of choice.
 ```
-git clone https://github.com/amrishraje/CBLiteTester.git  
+git clone https://github.com/Infosys/CouchbaseLiteTester.git  
 ```
 Build and run from your IDE using method of your choice. 
 

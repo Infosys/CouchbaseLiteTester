@@ -443,13 +443,13 @@ public class MainController implements Initializable {
     public void openAboutPage(ActionEvent event) {
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().browse(new URI("https://github.com/amrishraje/CBLiteTester"));
+                Desktop.getDesktop().browse(new URI("https://github.com/Infosys/CouchbaseLiteTester"));
             } catch (IOException e) {
                 logger.info("Unable to open about page", e);
             } catch (URISyntaxException e) {
                 logger.info("Unable to open about page, bad URL", e);
             }
-        } else logger.info("https://github.com/amrishraje/CBLiteTester");
+        } else logger.info("https://github.com/Infosys/CouchbaseLiteTester");
     }
 
     public void resetChannels(MouseEvent mouseEvent) {

@@ -35,8 +35,8 @@ public class Main extends Application {
         System.out.println("=============================================================================");
         System.out.println("Couchbase CBLite Tester");
         System.out.println("Author: Amrish Raje");
-        System.out.println("Repo: https://github.com/amrishraje/CBLiteTester");
-        System.out.println("License: https://github.com/amrishraje/CBLiteTester/blob/master/LICENSE");
+        System.out.println("Repo: https://github.com/Infosys/CouchbaseLiteTester");
+        System.out.println("License: https://github.com/Infosys/CouchbaseLiteTester/blob/master/LICENSE");
         System.out.println("=============================================================================");
         Parent root = loadFXML("CBLiteScreen");
         primaryStage.setTitle("Couchbase Lite Sync Tester");
