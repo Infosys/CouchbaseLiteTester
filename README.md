@@ -45,12 +45,18 @@ You may also open a document and edit it in the doc editor and sync it back to t
 ![Data Editor](https://github.com/amrishraje/amrishraje.github.io/blob/master/CBLiteTester_files/image006.png)
 
 Any changes to the document, will be locally saved to the CBLite Database. To sync the changes back to the server, make sure you select the replication mode as Push or ‘Pull and Push’. Click sync.
+> Note: Sync Gateway function should allow user to Push documents to server.
  
 Continuous Sync Mode can also be enabled by clicking on the Continuous Sync toggle.
  
 The Delete button can be used to delete the local CBLite Database. Note: Deleting the CBLite Database will NOT delete the documents on the server even if you click Sync or Continuous Sync is on.
  
 The Initialize button can be used to re-initialize the local CBLite database by downloading all documents from the server again. If you change the user and click Initialize, the data for previous user is deleted from the local CBLite DB and data for the new user is Synced and displayed in the table. 
+
+## Creating and Syncing new documents
+New documents can be created by clicking the 'Add Document' button. 
+![Create New Documents](https://github.com/amrishraje/amrishraje.github.io/blob/master/CBLiteTester_files/create_new_docs.png)
+On clicking save, the document is saved to the local CBLite database. Click 'Reload Table' to refresh the table view from the CBLite DB. To sync the new doc up to the server, make sure that Replication Mode is selected as either Push or 'Pull and Push'. Enter sync gateway credentials and click sync. 
 
 ## Working with an existing CBLite DB
 You can load an existing CBLite database file (dbname.cblite2) downloaded from a mobile device, or created using Couchbase CBLite CLI tool in the CBLite Tester tool. Launch the tool and click settings. Click the ‘Choose CBLite DB’ button and point to the folder containing your *.cblite2 file. Note: Do not point to the cblite2 folder itself, but point to the folder containing it. Also, ensure that the name of the cblite2 file is the same as the name of your database. In this example, the database name is syncdb and the tool will expect the CBLite database file to be called syncdb.cblite2
