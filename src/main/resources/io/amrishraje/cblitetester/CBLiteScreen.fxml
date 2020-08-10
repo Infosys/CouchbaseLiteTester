@@ -75,13 +75,14 @@
                </tooltip></TableView>
             <AnchorPane fx:id="tableAnchorPane" layoutX="252.0" layoutY="634.0" prefHeight="42.0" prefWidth="650.0" style="-fx-background-color: #888888; -fx-border-color: #777777;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
                <children>
-                  <TextField fx:id="tableSearchText" layoutX="14.0" layoutY="9.0" prefHeight="26.0" prefWidth="244.0" promptText="Search..." />
-                  <Label layoutX="482.0" layoutY="13.0" prefHeight="18.0" prefWidth="118.0" text="Load Full Document" textFill="WHITE" AnchorPane.rightAnchor="49.60000000000002">
+                  <TextField fx:id="tableSearchText" layoutX="14.0" layoutY="9.0" prefHeight="26.0" prefWidth="244.0" promptText="Search..." AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="200.0" />
+                  <Label layoutX="482.0" layoutY="13.0" prefHeight="18.0" prefWidth="118.0" text="Load Full Document" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
                      <tooltip>
                         <Tooltip text="Loading all documents may take a few momemnts depending on size of data" />
                      </tooltip>
                   </Label>
-                  <ToggleSwitch fx:id="loadFullDocSwitch" layoutX="429.0" layoutY="12.0" onMouseClicked="#loadFullDocument" textFill="WHITE" AnchorPane.rightAnchor="10.0" />
+                  <ToggleSwitch fx:id="loadFullDocSwitch" layoutX="429.0" layoutY="12.0" onMouseClicked="#loadFullDocument" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="100.0" />
+                  <Button fx:id="addDocButton" layoutX="415.0" layoutY="10.0" mnemonicParsing="false" onAction="#addDocument" text="Add Document" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="10.0" />
                </children>
             </AnchorPane>
          </children>

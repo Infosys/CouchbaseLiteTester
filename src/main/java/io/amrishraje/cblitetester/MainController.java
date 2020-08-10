@@ -80,6 +80,7 @@ public class MainController implements Initializable {
     public CheckComboBox channelsComboBoxList;
     public Hyperlink about;
     public ComboBox replicationMode;
+    public Button addDocButton;
     Properties properties = new Properties();
     Properties defaults = new Properties();
     @FXML
@@ -455,5 +456,18 @@ public class MainController implements Initializable {
     public void resetChannels(MouseEvent mouseEvent) {
         channelsComboBoxList.getItems().clear();
         channelsSet = false;
+    }
+
+    public void addDocument(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("NewDocumentEditor.fxml"));
+            Parent dataRoot = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Add New Document");
+            stage.setScene(new Scene(dataRoot, 800, 500));
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error loading NewDocumentEditor.fxml", e);
+        }
     }
 }
