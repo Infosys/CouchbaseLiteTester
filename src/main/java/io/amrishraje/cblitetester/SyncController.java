@@ -274,7 +274,12 @@ public class SyncController {
     public static void setCBLiteDocument(String key, String value) throws JsonSyntaxException {
 //        todo fix this method to save whole doc
         Document doc = database.getDocument(key);
-        MutableDocument mutableDocument = doc.toMutable();
+        MutableDocument mutableDocument;
+        if (doc != null) {
+             mutableDocument = doc.toMutable();
+        } else {
+            mutableDocument = new MutableDocument(key);
+        }
         Gson gson = new Gson();
         Map dataMap = gson.fromJson(value, Map.class);
         mutableDocument.setData(dataMap);
