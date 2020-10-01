@@ -10,9 +10,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.nio.file.Files;
 
 public class NewDocController {
 
@@ -20,6 +24,7 @@ public class NewDocController {
     public Label saveStatusLabel;
     public Button formatDataButton;
     public TextField docIdText;
+    public Button attachmentButton;
     @FXML
     private TextArea dataTextArea;
 
@@ -28,6 +33,8 @@ public class NewDocController {
 
     @FXML
     private Button newDocSaveButton;
+    private InputStream is = null;
+    private String mimeType = null;
 
     @FXML
     void cancelEdit(ActionEvent event) {
@@ -45,8 +52,7 @@ public class NewDocController {
             }
             String savedData = minifyData(dataTextArea.getText());
             String docId = docIdText.getText();
-            logger.info("Doc id is {} and body is {}",docId,savedData);
-            SyncController.setCBLiteDocument(docId, savedData);
+            SyncController.setCBLiteDocument(docId, savedData, is, mimeType);
             Stage stage = (Stage) editCancelButton.getScene().getWindow();
             stage.close();
         } catch (JsonSyntaxException exception) {
@@ -73,5 +79,22 @@ public class NewDocController {
     private String formatInput(String data) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(JsonParser.parseString(data));
+    }
+
+    public void chooseAttachment(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Attachment");
+        File attachment = fileChooser.showOpenDialog(attachmentButton.getScene().getWindow());
+        logger.debug("Attachment path is: {}", (attachment.getPath()));
+        try {
+            is = new FileInputStream(attachment);
+            mimeType = Files.probeContentType(attachment.toPath());
+            logger.debug("Attachment is of type: {}", mimeType);
+        } catch (FileNotFoundException e) {
+            logger.error("attachment not found!!");
+        } catch (IOException e) {
+            logger.error("Cannot figure out attachment MIME");
+        }
+        logger.debug("Input Stream is: {}", is);
     }
 }

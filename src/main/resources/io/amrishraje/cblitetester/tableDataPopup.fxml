@@ -49,8 +49,9 @@
                         <Button fx:id="documentSaveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveEditedDocument" text="Save" />
                     </buttons>
                   </ButtonBar>
-                  <TextField fx:id="searchField" layoutX="10.0" layoutY="11.0" onAction="#searchHandler" prefHeight="25.0" prefWidth="229.0" promptText="Search..." AnchorPane.leftAnchor="10.0" />
-                  <Button fx:id="searchButton" layoutX="248.0" layoutY="11.0" mnemonicParsing="false" onAction="#searchHandler" text="Search" />
+                  <TextField fx:id="searchField" layoutX="10.0" layoutY="11.0" onAction="#searchHandler" prefHeight="25.0" prefWidth="229.0" promptText="Search..." AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="10.0" />
+                  <Button fx:id="searchButton" layoutX="248.0" layoutY="11.0" mnemonicParsing="false" onAction="#searchHandler" text="Search" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="250.0" />
+                  <Button fx:id="attachmentButton" layoutX="308.0" layoutY="10.0" mnemonicParsing="false" onAction="#chooseAttachment" text="Attachments..." AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="320.0" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="45.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

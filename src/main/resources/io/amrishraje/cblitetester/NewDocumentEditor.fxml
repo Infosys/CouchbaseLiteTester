@@ -50,6 +50,7 @@
                     </buttons>
                   </ButtonBar>
                   <Button fx:id="formatDataButton" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#formatData" text="Format Data" AnchorPane.leftAnchor="10.0" />
+                  <Button fx:id="attachmentButton" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#chooseAttachment" text="Attachments..." AnchorPane.leftAnchor="100.0" />
                </children>
             </AnchorPane>
             <Label fx:id="saveStatusLabel" layoutX="558.0" layoutY="20.0" textFill="RED" AnchorPane.rightAnchor="15.0">

@@ -416,7 +416,7 @@ public class MainController implements Initializable {
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
 //                    TODO provide a way to authenticate against SG admin url. Currently there is no UI to get pwd
-                .addHeader("Authorization", properties.getProperty("sgAdminAuth", "Basic c3luY0FkbWluOnBlcHNpY28xMjM="))
+                .addHeader("Authorization", properties.getProperty("sgAdminAuth", "Basic something"))
                 .build();
         try {
             Response response = client.newCall(request).execute();

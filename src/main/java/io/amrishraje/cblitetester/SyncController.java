@@ -264,14 +264,27 @@ public class SyncController {
         return cbData;
     }
 
-    public static String getCBLiteDocument(String docId) throws CouchbaseLiteException{
+    public static String getCBLiteDocument(String docId) throws CouchbaseLiteException {
         Document doc = database.getDocument(docId);
         Gson gson = new Gson();
-        String json = gson.toJson(doc.toMap());
+        String json = null;
+        try {
+            json = gson.toJson(doc.toMap());
+        } catch (IllegalArgumentException exception) {
+            Query queryAll = QueryBuilder.select(SelectResult.all(),
+                    SelectResult.expression(Meta.id))
+                    .from(DataSource.database(database))
+                    .where(Expression.property("_id").equalTo(Expression.string(docId)));
+            ResultSet resultFull = queryAll.execute();
+
+            for (Result result : resultFull) {
+                json = gson.toJson(result.toMap().get(DB_NAME));
+            }
+        }
         return json;
     }
 
-    public static void setCBLiteDocument(String key, String value) throws JsonSyntaxException {
+    public static void setCBLiteDocument(String key, String value, InputStream is, String mimeType) throws JsonSyntaxException {
 //        todo fix this method to save whole doc
         Document doc = database.getDocument(key);
         MutableDocument mutableDocument;
@@ -283,6 +296,13 @@ public class SyncController {
         Gson gson = new Gson();
         Map dataMap = gson.fromJson(value, Map.class);
         mutableDocument.setData(dataMap);
+
+//        Add attachments
+        if (is != null){
+        Blob blob = new Blob(mimeType, is);
+        mutableDocument.setBlob("docAttachment",blob);
+        }
+
         try {
             database.save(mutableDocument);
         } catch (CouchbaseLiteException e) {
