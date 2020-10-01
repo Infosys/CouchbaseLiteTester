@@ -25,9 +25,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.nio.file.Files;
 
 public class DataPopupController {
 
@@ -38,12 +42,15 @@ public class DataPopupController {
     public Button editCancelButton;
     public Button documentSaveButton;
     public Label saveStatusLabel;
+    public Button attachmentButton;
     int fromIndex = 0;
     MainController mainController;
     int tableIndex;
     @FXML
     private TextArea dataTextArea;
     private String holdSearchText;
+    private FileInputStream is = null;
+    private String mimeType = null;
 
     @FXML
     void initialize() {
@@ -101,7 +108,7 @@ public class DataPopupController {
     public void saveEditedDocument(ActionEvent event) {
 //        Todo - refresh table after save
         try {
-            SyncController.setCBLiteDocument(docIdLabel.getText(), dataTextArea.getText());
+            SyncController.setCBLiteDocument(docIdLabel.getText(), dataTextArea.getText(), is, mimeType);
             mainController.refreshTable(minifyData(dataTextArea.getText()), tableIndex);
             Stage stage = (Stage) editCancelButton.getScene().getWindow();
             stage.close();
@@ -109,5 +116,24 @@ public class DataPopupController {
             saveStatusLabel.setText("Malformed JSON, please correct");
             logger.error("Malformed JSON - {}", exception.getMessage());
         }
+    }
+
+    public void chooseAttachment(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Attachment");
+        File attachment = fileChooser.showOpenDialog(attachmentButton.getScene().getWindow());
+        if (attachment == null) return;
+        logger.debug("Attachment path is: {}", (attachment.getPath()));
+        try {
+            is = new FileInputStream(attachment);
+            mimeType = Files.probeContentType(attachment.toPath());
+            saveStatusLabel.setText("Attachment Added. Please save document");
+            logger.debug("Attachment is of type: {}", mimeType);
+        } catch (FileNotFoundException e) {
+            logger.info("attachment not found!!");
+        } catch (IOException e) {
+            logger.info("Cannot figure out attachment MIME");
+        }
+        logger.debug("Input Stream is: {}", is);
     }
 }
