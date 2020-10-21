@@ -18,6 +18,7 @@ package io.amrishraje.cblitetester;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -92,10 +93,25 @@ public class MainController implements Initializable {
     private String pwd;
     private boolean channelsSet;
     private String currentEnvironment = "";
+    private ObservableList<Map.Entry<String, String>> items;
 
+
+    private FilteredList<Map.Entry<String, String>> filteredData;
 
     public MainController() {
         cbLiteDataMap = new HashMap<>();
+    }
+
+    public FilteredList<Map.Entry<String, String>> getFilteredData() {
+        return filteredData;
+    }
+
+    public Map<String, String> getCbLiteDataMap() {
+        return cbLiteDataMap;
+    }
+
+    public TableView<Map.Entry<String, String>> getDataTable() {
+        return dataTable;
     }
 
     @FXML
@@ -173,7 +189,7 @@ public class MainController implements Initializable {
                 }
             }
         });
-        replicationMode.setItems(FXCollections.observableArrayList("Pull", "Push","Pull and Push"));
+        replicationMode.setItems(FXCollections.observableArrayList("Pull", "Push", "Pull and Push"));
     }
 
     @FXML
@@ -210,8 +226,8 @@ public class MainController implements Initializable {
             }
         });
 
-        ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
-        FilteredList<Map.Entry<String, String>> filteredData = new FilteredList<>(items, p -> true);
+        items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
+        filteredData = new FilteredList<>(items, p -> true);
         tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(tableData -> {
                 // If filter text is empty, display all persons.
@@ -259,15 +275,6 @@ public class MainController implements Initializable {
         dataTable.getItems().get(tableIndex).setValue(docVal);
         dataTable.refresh();
     }
-
-//    private void showStatusForTable(String message) {
-//        Platform.runLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                tableStatusLabel.setText(message);
-//            }
-//        });
-//    }
 
     private void showDataPopup(String key, String value, int index) {
         try {
@@ -468,6 +475,33 @@ public class MainController implements Initializable {
             stage.show();
         } catch (Exception e) {
             logger.error("Error loading NewDocumentEditor.fxml", e);
+        }
+    }
+
+    public void resetSearch(ActionEvent event) {
+        filteredData.setPredicate(x -> true);
+        tableSearchText.clear();
+    }
+
+    public void advanceSearch(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AdvanceSearchScreen.fxml"));
+            Parent dataRoot = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Advance Search");
+            stage.setScene(new Scene(dataRoot, 800, 500));
+            AdvanceSearchController advanceSearchController = fxmlLoader.getController();
+            advanceSearchController.setMainController(this);
+            Platform.runLater(() -> {
+                        if (!loadFullDocSwitch.isSelected()) {
+                            loadFullDocSwitch.setSelected(true);
+                            loadFullDocument(null);
+                        }
+                    }
+            );
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error loading AdvanceSearchScreen.fxml", e);
         }
     }
 }

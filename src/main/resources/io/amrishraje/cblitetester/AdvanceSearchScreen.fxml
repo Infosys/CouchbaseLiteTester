@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<!--
+  ~ Copyright (c) 2020.  amrishraje@gmail.com
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.amrishraje.cblitetester.AdvanceSearchController">
+    <children>
+        <AnchorPane prefHeight="45.0" prefWidth="600.0" style="-fx-background-color: #555555;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Label layoutX="41.0" layoutY="14.0" text="Advance Search" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0">
+                    <font>
+                        <Font name="System Bold" size="17.0" />
+                    </font>
+                </Label>
+            </children>
+        </AnchorPane>
+        <AnchorPane prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
+            <children>
+                <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                    <children>
+                        <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="15.0">
+                            <buttons>
+                                <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#cancelSearch" text="Cancel" />
+                                <Button fx:id="searchButton" defaultButton="true" mnemonicParsing="false" onAction="#searchDocuments" text="Search" />
+                            </buttons>
+                        </ButtonBar>
+                    </children>
+                </AnchorPane>
+                <Label fx:id="searchStatusLabel" layoutX="558.0" layoutY="20.0" text="Matches entered text across all documents. Multiple search keywords can be entered by seperating them with a semicolon. Default search matches whole words. Use checkbox to allow partial word match. Search may take several seconds depending on number of docs and doc size. Partial matches will take more time." textFill="#615f6fe8" wrapText="true" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="55.0">
+                    <font>
+                        <Font name="System Italic" size="12.0" />
+                    </font>
+                </Label>
+            <TextField fx:id="searchTextBox" layoutX="38.0" layoutY="16.0" promptText="Search in document body. Use ; to seperate multiple keywords" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="175.0" AnchorPane.topAnchor="15.0">
+               <tooltip>
+                  <Tooltip text="Matches entered text across all documents. Search may take several seconds depending on number of docs and doc size" />
+               </tooltip>
+            </TextField>
+            <CheckBox fx:id="matchWholeWords" layoutX="456.0" layoutY="20.0" mnemonicParsing="false" selected="true" text="Match Whole Words" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>
