@@ -25,6 +25,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -82,6 +83,9 @@ public class MainController implements Initializable {
     public Hyperlink about;
     public ComboBox replicationMode;
     public Button addDocButton;
+    public ProgressBar progressBar;
+    public Label progressText;
+    public AnchorPane progressAnchorPane;
     Properties properties = new Properties();
     Properties defaults = new Properties();
     @FXML
@@ -97,6 +101,7 @@ public class MainController implements Initializable {
 
 
     private FilteredList<Map.Entry<String, String>> filteredData;
+    private Task task;
 
     public MainController() {
         cbLiteDataMap = new HashMap<>();
@@ -178,6 +183,7 @@ public class MainController implements Initializable {
         readDefaults();
         SyncController.createLocalCBLiteFile();
         populateTable(false);
+        setupTable();
         channelsComboBoxList.getCheckModel().getCheckedItems().addListener((ListChangeListener) change -> {
             if (channelsComboBoxList.getCheckModel().getCheckedItems().contains("Click to add...")) {
                 channelsComboBoxList.getCheckModel().toggleCheckState(0);
@@ -203,72 +209,57 @@ public class MainController implements Initializable {
     }
 
     public void populateTable(boolean fullDoc) {
-//        TODO implement platform.runlater
-//        Platform.runLater(new Runnable() {
-//            @Override
-//            public void run() {
-        try {
-            cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData(fullDoc);
-        } catch (CouchbaseLiteException e) {
-            logger.info("Unable to read CBLite DB", e);
-        }
-        docId.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
-                return new SimpleStringProperty(p.getValue().getKey());
+//        try {
+//            cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData(fullDoc);
+//        } catch (CouchbaseLiteException e) {
+//            logger.info("Unable to read CBLite DB", e);
+//        }
+//        items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
+//        filteredData = new FilteredList<>(items, p -> true);
+//        dataTable.setItems(filteredData);
+        task = populateTableTask(fullDoc);
+        Thread thread = new Thread(task);
+        thread.start();
+        task.setOnSucceeded(workerStateEvent -> {
+            progressBar.setVisible(false);
+            progressText.setVisible(false);
+            progressAnchorPane.setVisible(false);
+        });
+        Platform.runLater(() -> {
+            if (fullDoc) {
+                progressBar.setVisible(true);
+                progressText.setVisible(true);
+                progressAnchorPane.setVisible(true);
+                progressBar.progressProperty().bind(task.progressProperty());
             }
         });
+    }
 
-        docValue.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
+    public void populateTableV2(boolean fullDoc) {
+        logger.info("Calling populateTableV2");
+        Task task = populateTableTask(fullDoc);
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    public Task populateTableTask(boolean fullDoc){
+        return new Task() {
             @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
-                return new SimpleStringProperty(p.getValue().getValue());
+            protected Object call() throws Exception {
+                try {
+                    SyncController.progressProperty().addListener((observableValue, number, t1) -> {
+                        updateProgress(t1.doubleValue(),1);
+                    });
+                    cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData(fullDoc);
+                } catch (CouchbaseLiteException e) {
+                    logger.info("Unable to read CBLite DB", e);
+                }
+                items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
+                filteredData = new FilteredList<>(items, p -> true);
+                dataTable.setItems(filteredData);
+                return null;
             }
-        });
-
-        items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
-        filteredData = new FilteredList<>(items, p -> true);
-        tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(tableData -> {
-                // If filter text is empty, display all persons.
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (tableData.getKey().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches key.
-                }
-                return false; // Does not match.
-            });
-        });
-        dataTable.getColumns().setAll(docId, docValue);
-        docId.setEditable(false);
-        docId.prefWidthProperty().bind(dataTable.widthProperty().divide(8).multiply(3)); //w*3/8
-        docValue.prefWidthProperty().bind(dataTable.widthProperty().divide(8).multiply(5)); //w*5/8
-        dataTable.setItems(filteredData);
-        dataTable.setRowFactory(tv -> {
-            TableRow<Map.Entry<String, String>> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty()) {
-                    Map.Entry<String, String> dataValue = row.getItem();
-                    String document = "Unable to load document!";
-                    if (dataValue.getValue() == "Click to load document...") {
-                        try {
-                            document = SyncController.getCBLiteDocument(dataValue.getKey());
-                            dataValue.setValue(document);
-                            row.setItem(dataValue);
-                            dataTable.refresh();
-                        } catch (CouchbaseLiteException e) {
-                            logger.error("Error reading doc " + dataValue.getValue() + " from CBLite DB");
-                        }
-                        showDataPopup(dataValue.getKey(), document, row.getIndex());
-                    } else
-                        showDataPopup(dataValue.getKey(), dataValue.getValue(), row.getIndex());
-                }
-            });
-            return row;
-        });
+        };
     }
 
     public void refreshTable(String docVal, int tableIndex) {
@@ -483,23 +474,85 @@ public class MainController implements Initializable {
         tableSearchText.clear();
     }
 
+    public void setupTable(){
+        docId.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
+                return new SimpleStringProperty(p.getValue().getKey());
+            }
+        });
+
+        docValue.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
+                return new SimpleStringProperty(p.getValue().getValue());
+            }
+        });
+
+//        items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
+//        filteredData = new FilteredList<>(items, p -> true);
+        tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(tableData -> {
+                // If filter text is empty, display all persons.
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (tableData.getKey().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches key.
+                }
+                return false; // Does not match.
+            });
+        });
+        dataTable.getColumns().setAll(docId, docValue);
+        docId.setEditable(false);
+        docId.prefWidthProperty().bind(dataTable.widthProperty().divide(8).multiply(3)); //w*3/8
+        docValue.prefWidthProperty().bind(dataTable.widthProperty().divide(8).multiply(5)); //w*5/8
+//        dataTable.setItems(filteredData);
+        dataTable.setRowFactory(tv -> {
+            TableRow<Map.Entry<String, String>> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty()) {
+                    Map.Entry<String, String> dataValue = row.getItem();
+                    String document = "Unable to load document!";
+                    if (dataValue.getValue() == "Click to load document...") {
+                        try {
+                            document = SyncController.getCBLiteDocument(dataValue.getKey());
+                            dataValue.setValue(document);
+                            row.setItem(dataValue);
+                            dataTable.refresh();
+                        } catch (CouchbaseLiteException e) {
+                            logger.error("Error reading doc " + dataValue.getValue() + " from CBLite DB");
+                        }
+                        showDataPopup(dataValue.getKey(), document, row.getIndex());
+                    } else
+                        showDataPopup(dataValue.getKey(), dataValue.getValue(), row.getIndex());
+                }
+            });
+            return row;
+        });
+    }
+
     public void advanceSearch(ActionEvent event) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AdvanceSearchScreen.fxml"));
             Parent dataRoot = (Parent) fxmlLoader.load();
             Stage stage = new Stage();
             stage.setTitle("Advance Search");
-            stage.setScene(new Scene(dataRoot, 800, 500));
+            stage.setScene(new Scene(dataRoot));
             AdvanceSearchController advanceSearchController = fxmlLoader.getController();
             advanceSearchController.setMainController(this);
-            Platform.runLater(() -> {
-                        if (!loadFullDocSwitch.isSelected()) {
-                            loadFullDocSwitch.setSelected(true);
-                            loadFullDocument(null);
-                        }
-                    }
-            );
-            stage.show();
+            if (!loadFullDocSwitch.isSelected()) {
+                loadFullDocSwitch.setSelected(true);
+                loadFullDocument(null);
+                task.setOnSucceeded(workerStateEvent -> {
+                    progressBar.setVisible(false);
+                    progressText.setVisible(false);
+                    progressAnchorPane.setVisible(false);
+                    stage.show();
+                });
+            } else stage.show();
         } catch (Exception e) {
             logger.error("Error loading AdvanceSearchScreen.fxml", e);
         }
