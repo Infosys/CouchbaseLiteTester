@@ -19,6 +19,9 @@ import com.couchbase.lite.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.concurrent.Task;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class SyncController {
     private static final Logger logger = LoggerFactory.getLogger(SyncController.class);
@@ -61,6 +61,17 @@ public class SyncController {
 
     public static Database getDatabase() {
         return database;
+    }
+
+    private static final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper();
+    private static int size;
+
+    public static double getProgress() {
+        return progressProperty().get();
+    }
+
+    public static ReadOnlyDoubleProperty progressProperty() {
+        return progress ;
     }
 
     public static void createLocalCBLiteFile() {
@@ -246,6 +257,7 @@ public class SyncController {
     }
 
     public static HashMap getCBLiteData(boolean fullDoc) throws CouchbaseLiteException {
+        logger.info("Start: {}", System.currentTimeMillis());
         HashMap<String, String> cbData = new HashMap<>(10);
         Query queryAll = QueryBuilder.select(SelectResult.all(),
                 SelectResult.expression(Meta.id))
@@ -253,14 +265,50 @@ public class SyncController {
         ResultSet resultFull = queryAll.execute();
         Gson gson = new Gson();
 
-        for (Result result: resultFull){
-            if (fullDoc)
-//                cbData.put(result.getString("id"), result.toList().get(0).toString());
+        int i = 0;
+        for (Result result : resultFull) {
+            if (fullDoc) {
+                i++;
+                progress.set(i * 1.0/ size);
                 cbData.put(result.getString("id"), gson.toJson(result.toMap().get(DB_NAME)));
-            else
+            } else {
                 cbData.put(result.getString("id"), "Click to load document...");
+            }
         }
+        size = cbData.size();
+        logger.info("total number of records are :" + size);
+        logger.info("End: {}", System.currentTimeMillis());
+        return cbData;
+    }
+
+    public static HashMap getCBLiteDataV2(boolean fullDoc) throws CouchbaseLiteException {
+//        TODO - Performance tuning for fetching all docs
+        logger.info("Start: {}", System.currentTimeMillis());
+        HashMap<String, String> cbData = new HashMap<>(10);
+        Document doc;
+        Gson gson = new Gson();
+        Query queryAll = QueryBuilder.select(SelectResult.all(),SelectResult.expression(Meta.id))
+                .from(DataSource.database(database));
+        ResultSet resultFull = queryAll.execute();
+        logger.info("Start List: {}", System.currentTimeMillis());
+        List<Result> list = resultFull.allResults();
+        Spliterator<Result> sp1 = list.spliterator().trySplit();
+        Spliterator<Result> sp2 = list.spliterator().trySplit();
+        sp1.forEachRemaining(result -> {
+            if (!fullDoc)
+                cbData.put(result.getString("id"), "Click to load document...");
+            else
+                cbData.put(result.getString("id"), gson.toJson(result.toMap().get(DB_NAME)));
+        });
+        sp2.forEachRemaining(result -> {
+            if (!fullDoc)
+                cbData.put(result.getString("id"), "Click to load document...");
+            else
+                cbData.put(result.getString("id"), gson.toJson(result.toMap().get(DB_NAME)));
+        });
+        logger.info("End List: {}", System.currentTimeMillis());
         logger.info("total number of records are :" + cbData.size());
+        logger.info("End: {}", System.currentTimeMillis());
         return cbData;
     }
 
@@ -285,7 +333,6 @@ public class SyncController {
     }
 
     public static void setCBLiteDocument(String key, String value, InputStream is, String mimeType) throws JsonSyntaxException {
-//        todo fix this method to save whole doc
         Document doc = database.getDocument(key);
         MutableDocument mutableDocument;
         if (doc != null) {
