@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -70,19 +71,30 @@
                   <TableColumn fx:id="docId" maxWidth="500.0" prefWidth="250.0" text="Doc Id" />
                   <TableColumn fx:id="docValue" text="Document Value" />
                </columns>
+               <placeholder>
+                  <Label text="CBLite DB is empty. Sync Data from Sync Gateway or select a CBLite file pre-loaded with data via Settings. &#10;&#10;                                                                 OR&#10;&#10;Advance Search returned no results. Click Reset Search to show all docs." />
+               </placeholder>
                <tooltip>
                   <Tooltip text="Click on a row to view and edit the document" />
                </tooltip></TableView>
             <AnchorPane fx:id="tableAnchorPane" layoutX="252.0" layoutY="634.0" prefHeight="42.0" prefWidth="650.0" style="-fx-background-color: #888888; -fx-border-color: #777777;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
                <children>
-                  <TextField fx:id="tableSearchText" layoutX="14.0" layoutY="9.0" prefHeight="26.0" prefWidth="244.0" promptText="Search..." AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="200.0" />
+                  <TextField fx:id="tableSearchText" layoutX="202.0" layoutY="9.0" prefHeight="26.0" prefWidth="139.0" promptText="Search by Doc Id" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="170.0" />
                   <Label layoutX="482.0" layoutY="13.0" prefHeight="18.0" prefWidth="118.0" text="Load Full Document" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
                      <tooltip>
-                        <Tooltip text="Loading all documents may take a few momemnts depending on size of data" />
+                        <Tooltip text="Loading all documents may take a few moments depending on size of data" />
                      </tooltip>
                   </Label>
                   <ToggleSwitch fx:id="loadFullDocSwitch" layoutX="429.0" layoutY="12.0" onMouseClicked="#loadFullDocument" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="100.0" />
                   <Button fx:id="addDocButton" layoutX="415.0" layoutY="10.0" mnemonicParsing="false" onAction="#addDocument" text="Add Document" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="10.0" />
+                  <Button fx:id="resetSearchButton" mnemonicParsing="false" onAction="#resetSearch" text="Reset Search" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="315.0" />
+                  <Button fx:id="advanceSearchButton" layoutX="467.0" layoutY="10.0" mnemonicParsing="false" onAction="#advanceSearch" text="Advance Search..." AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="125.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="progressAnchorPane" layoutX="300.0" layoutY="458.0" prefHeight="42.0" prefWidth="400.0" style="-fx-background-color: #999999;" visible="false" AnchorPane.bottomAnchor="100.0" AnchorPane.rightAnchor="150.0">
+               <children>
+                  <ProgressBar fx:id="progressBar" prefHeight="20.0" progress="0.0" visible="false" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <Label fx:id="progressText" layoutX="10.0" layoutY="0.79998779296875" text="Loading data, please wait..." visible="false" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>
          </children>
