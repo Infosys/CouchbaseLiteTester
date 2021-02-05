@@ -18,6 +18,8 @@ package io.amrishraje.cblitetester;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -40,6 +42,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -58,9 +61,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+    private final String version = "v1.6";
     public Button syncButton;
     public TextField userText;
     public PasswordField pwdText;
@@ -86,6 +91,8 @@ public class MainController implements Initializable {
     public ProgressBar progressBar;
     public Label progressText;
     public AnchorPane progressAnchorPane;
+    public Label docCountLabel;
+    public AnchorPane docCountAnchorPane;
     Properties properties = new Properties();
     Properties defaults = new Properties();
     @FXML
@@ -196,6 +203,8 @@ public class MainController implements Initializable {
             }
         });
         replicationMode.setItems(FXCollections.observableArrayList("Pull", "Push", "Pull and Push"));
+        //Setup About
+        about.setText("CBLite Tester " + version + " by Amrish Raje" );
     }
 
     @FXML
@@ -492,6 +501,8 @@ public class MainController implements Initializable {
 //        items = FXCollections.observableArrayList(cbLiteDataMap.entrySet());
 //        filteredData = new FilteredList<>(items, p -> true);
         tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
+            AtomicInteger docCount = new AtomicInteger();
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5),x -> docCountAnchorPane.setVisible(false)));
             filteredData.setPredicate(tableData -> {
                 // If filter text is empty, display all persons.
                 if (newValue == null || newValue.isEmpty()) {
@@ -500,10 +511,23 @@ public class MainController implements Initializable {
                 String lowerCaseFilter = newValue.toLowerCase();
 
                 if (tableData.getKey().toLowerCase().contains(lowerCaseFilter)) {
+                    docCount.getAndIncrement();
                     return true; // Filter matches key.
                 }
                 return false; // Does not match.
             });
+            docCountLabel.setText(docCount.toString() + " documents matched");
+            docCountLabel.setVisible(true);
+            docCountLabel.setStyle("-fx-background: rgba(30,30,30);\n" +
+                    "    -fx-text-fill: white;\n" +
+                    "    -fx-background-color: rgba(30,30,30,0.8);\n" +
+                    "    -fx-background-radius: 6px;\n" +
+                    "    -fx-background-insets: 0;\n" +
+                    "    -fx-padding: 0.667em 0.75em 0.667em 0.75em; /* 10px */\n" +
+                    "    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );\n" +
+                    "    -fx-font-size: 0.85em;");
+            docCountAnchorPane.setVisible(true);
+            Platform.runLater(timeline::play);
         });
         dataTable.getColumns().setAll(docId, docValue);
         docId.setEditable(false);
