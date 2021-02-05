@@ -65,6 +65,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+    private final String version = "v1.6";
     public Button syncButton;
     public TextField userText;
     public PasswordField pwdText;
@@ -202,6 +203,8 @@ public class MainController implements Initializable {
             }
         });
         replicationMode.setItems(FXCollections.observableArrayList("Pull", "Push", "Pull and Push"));
+        //Setup About
+        about.setText("CBLite Tester " + version + " by Amrish Raje" );
     }
 
     @FXML
@@ -509,22 +512,22 @@ public class MainController implements Initializable {
 
                 if (tableData.getKey().toLowerCase().contains(lowerCaseFilter)) {
                     docCount.getAndIncrement();
-                    docCountLabel.setText(docCount.toString() + " documents matched");
-                    docCountLabel.setVisible(true);
-                    docCountLabel.setStyle("-fx-background: rgba(30,30,30);\n" +
-                            "    -fx-text-fill: white;\n" +
-                            "    -fx-background-color: rgba(30,30,30,0.8);\n" +
-                            "    -fx-background-radius: 6px;\n" +
-                            "    -fx-background-insets: 0;\n" +
-                            "    -fx-padding: 0.667em 0.75em 0.667em 0.75em; /* 10px */\n" +
-                            "    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );\n" +
-                            "    -fx-font-size: 0.85em;");
-                    docCountAnchorPane.setVisible(true);
-                    Platform.runLater(timeline::play);
                     return true; // Filter matches key.
                 }
                 return false; // Does not match.
             });
+            docCountLabel.setText(docCount.toString() + " documents matched");
+            docCountLabel.setVisible(true);
+            docCountLabel.setStyle("-fx-background: rgba(30,30,30);\n" +
+                    "    -fx-text-fill: white;\n" +
+                    "    -fx-background-color: rgba(30,30,30,0.8);\n" +
+                    "    -fx-background-radius: 6px;\n" +
+                    "    -fx-background-insets: 0;\n" +
+                    "    -fx-padding: 0.667em 0.75em 0.667em 0.75em; /* 10px */\n" +
+                    "    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );\n" +
+                    "    -fx-font-size: 0.85em;");
+            docCountAnchorPane.setVisible(true);
+            Platform.runLater(timeline::play);
         });
         dataTable.getColumns().setAll(docId, docValue);
         docId.setEditable(false);

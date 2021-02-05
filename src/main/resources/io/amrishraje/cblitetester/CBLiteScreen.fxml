@@ -65,7 +65,7 @@
                   <Label layoutX="21.0" layoutY="211.0" text="Continuous Sync" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="165.0" />
                   <ToggleSwitch fx:id="continuousToggle" layoutX="99.0" layoutY="211.0" onMouseClicked="#toggleContinuousMode" textFill="WHITE" AnchorPane.leftAnchor="110.0" AnchorPane.topAnchor="165.0" />
                   <CheckComboBox fx:id="channelsComboBoxList" layoutX="21.0" layoutY="131.0" onMouseEntered="#setUpChannels" title="Sync Channels | Default: All" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="90.0" />
-                  <Hyperlink fx:id="about" layoutX="22.0" layoutY="490.0" onAction="#openAboutPage" text="About CBLiteTester" textFill="WHITE" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                  <Hyperlink fx:id="about" layoutX="22.0" layoutY="490.0" onAction="#openAboutPage" textFill="WHITE" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                   <ComboBox fx:id="replicationMode" layoutX="23.0" layoutY="132.0" prefWidth="150.0" promptText="Replication Mode | Default: Pull" visibleRowCount="3" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="130.0" />
                </children>
             </AnchorPane>
