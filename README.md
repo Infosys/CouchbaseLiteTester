@@ -126,6 +126,7 @@ This will create a distributable JAR file in build folder. Package an appropriat
 * ~~Support for adding Attachments (Blobs) to Documents in CBLite Tester tool and syncing it up to the server~~ (implemented in v1.4)
 * Improve performance for loading full documents in Table
 * Modular Java app with distributable package
+* Support for exporting synced documents
 * ~~Package app for distribution as JAR~~ (implemented in v1.1)
 * ~~Support for loading data from another CBLite DB~~ (implemented in v1.2)
 * ~~Support to create documents in CBLite from UI and sync up to the DB via Sync Gateway~~ (implemented in v1.3)
