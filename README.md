@@ -1,9 +1,9 @@
 # CouchbaseLiteTester 
-###### version 1.6
+###### version 1.7
 This app provides a UI to create a local Couchbase Lite DB and Sync Data to the DB from a Couchbase Sync Gateway. It provides features to search for documents in the CBLite DB, selectively sync certain channels and supports both Pull and Push replication.
 
 ## Getting Started
-For your convenience, I have uploaded a pre-built binary to the [Releases](https://github.com/Infosys/CouchbaseLiteTester/releases) tab. Currently, the binary is tested for Windows only.
+For your convenience, I have uploaded a pre-built binary to the [Releases](https://github.com/Infosys/CouchbaseLiteTester/releases) tab.
 > Note: Binary releases are provided for major versions. Please build from source for latest features. 
 
 Run the Binary by double clicking on the CBLiteTester.jar file or using ``java -jar CBLiteTester.jar``. Java JRE must be correctly installed on the system.
@@ -70,6 +70,13 @@ Click on Save to save the settings. Then click Reload Table to load the new CBLi
 ## Creating a Pre-built CBLite Database image for Mobile
 The CBLite Tester can also be used to create a pre-built DB image that can be deployed on a mobile app. Simply sync data with any Sync Gateway so that the tool creates a dbname.cblite2 file. Edit documents in the tool as desired and save them. All changes will be saved to the dbname.cblite2 file. Simply copy the database file to your mobile device and all the data in the file should be available in the Couchbase Lite mobile application. Future enhancements to the tool will provide ability to add new documents and attachments (Blobs) to CBLite DB via the tool rather than having to sync from a Sync Gateway.
 
+## Exporting documents from CBLite and importing to Couchbase DB
+The CBLite Tester can be used to export documents in CBLite file to a txt file. This file can be imported into Couchbase Server. This can be very handy if there is a Sync issue preventing some docs from syncing. The file can be imported into CB Server using cbimport or Import Documents functionality in the CB web console.
+```
+cbimport json --format lines -c http://cb-hostname:8091 -u <login> -p <password> -d 'file://cblite_export.txt' -b 'bucket' -g #UUID# 
+```   
+
+
 ## Building the tool from Code
 Download from git and import into your IDE of choice.
 ```
@@ -88,6 +95,9 @@ mvn compile package
 This will create a distributable JAR file in build folder. Package an appropriate defaults.xml file along with your jar file with appropriate environments setup.  
 
 ## Features
+###### version 1.7
+* Export docs from CBLite to a txt/json file
+* Minor enhancements and bug fixes
 ###### version 1.6
 * Minor enhancements and bug fixes
 * Search displays matched doc counts
