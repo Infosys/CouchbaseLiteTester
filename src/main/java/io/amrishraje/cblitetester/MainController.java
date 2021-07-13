@@ -36,10 +36,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -52,10 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -81,6 +80,8 @@ public class MainController implements Initializable {
     public TextField tableSearchText;
     @FXML
     public TextField sgURL;
+    @FXML
+    public MenuItem exportDocs;
     public AnchorPane tableAnchorPane;
     public ToggleSwitch loadFullDocSwitch;
     public ToggleSwitch continuousToggle;
@@ -204,7 +205,7 @@ public class MainController implements Initializable {
         });
         replicationMode.setItems(FXCollections.observableArrayList("Pull", "Push", "Pull and Push"));
         //Setup About
-        about.setText("CBLite Tester " + version + " by Amrish Raje" );
+        about.setText("CBLite Tester " + version + " by Amrish Raje");
     }
 
     @FXML
@@ -251,13 +252,13 @@ public class MainController implements Initializable {
         thread.start();
     }
 
-    public Task populateTableTask(boolean fullDoc){
+    public Task populateTableTask(boolean fullDoc) {
         return new Task() {
             @Override
             protected Object call() throws Exception {
                 try {
                     SyncController.progressProperty().addListener((observableValue, number, t1) -> {
-                        updateProgress(t1.doubleValue(),1);
+                        updateProgress(t1.doubleValue(), 1);
                     });
                     cbLiteDataMap = (SyncController.getDatabase() == null) ? new HashMap<>() : SyncController.getCBLiteData(fullDoc);
                 } catch (CouchbaseLiteException e) {
@@ -483,7 +484,7 @@ public class MainController implements Initializable {
         tableSearchText.clear();
     }
 
-    public void setupTable(){
+    public void setupTable() {
         docId.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<String, String>, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<String, String>, String> p) {
@@ -502,7 +503,7 @@ public class MainController implements Initializable {
 //        filteredData = new FilteredList<>(items, p -> true);
         tableSearchText.textProperty().addListener((observable, oldValue, newValue) -> {
             AtomicInteger docCount = new AtomicInteger();
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5),x -> docCountAnchorPane.setVisible(false)));
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), x -> docCountAnchorPane.setVisible(false)));
             filteredData.setPredicate(tableData -> {
                 // If filter text is empty, display all persons.
                 if (newValue == null || newValue.isEmpty()) {
@@ -580,5 +581,53 @@ public class MainController implements Initializable {
         } catch (Exception e) {
             logger.error("Error loading AdvanceSearchScreen.fxml", e);
         }
+    }
+
+    public void exportDocuments(ActionEvent event) {
+        logger.info("Clicked Export Docs");
+        if (!loadFullDocSwitch.isSelected()) {
+            loadFullDocSwitch.setSelected(true);
+            loadFullDocument(null);
+            task.setOnSucceeded(workerStateEvent -> {
+                progressBar.setVisible(false);
+                progressText.setVisible(false);
+                progressAnchorPane.setVisible(false);
+                try {
+                    writeExcel();
+                } catch (IOException e) {
+                    logger.error("Cannot export file");
+                }
+            });
+        } else {
+            try {
+                writeExcel();
+            } catch (IOException e) {
+                logger.error("Cannot export file");
+            }
+        }
+    }
+
+    public void writeExcel() throws IOException {
+        Writer writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(chooseExportFile()));
+            StringBuilder exportText = new StringBuilder();
+            getCbLiteDataMap().forEach((k, v) -> exportText.append(v).append("\n"));
+            writer.write(exportText.toString());
+        } catch (Exception ex) {
+            logger.error("could not open file to export docs");
+        } finally {
+            writer.flush();
+            writer.close();
+        }
+    }
+
+    public File chooseExportFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select export file");
+        fileChooser.setInitialFileName("cblite_export.txt");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JSON Files", "*.txt", "*.json"));
+        return fileChooser.showSaveDialog(null);
     }
 }
