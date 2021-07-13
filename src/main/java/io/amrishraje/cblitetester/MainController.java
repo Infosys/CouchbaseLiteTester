@@ -64,7 +64,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
-    private final String version = "v1.6";
     public Button syncButton;
     public TextField userText;
     public PasswordField pwdText;
@@ -106,6 +105,7 @@ public class MainController implements Initializable {
     private boolean channelsSet;
     private String currentEnvironment = "";
     private ObservableList<Map.Entry<String, String>> items;
+    private String version = "v1.6";
 
 
     private FilteredList<Map.Entry<String, String>> filteredData;
@@ -188,6 +188,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         readProperties();
+        version = properties.getProperty("version", "v1.7+");
         readDefaults();
         SyncController.createLocalCBLiteFile();
         populateTable(false);
@@ -321,6 +322,7 @@ public class MainController implements Initializable {
         properties.setProperty("sgURL", "ws://none");
         properties.setProperty("sgCert", "none");
         properties.setProperty("sgDB", "none");
+        properties.setProperty("version", "v1.7+");
     }
 
     private void readDefaults() {
