@@ -1,5 +1,5 @@
 # CouchbaseLiteTester 
-###### version 1.7
+###### version 1.8
 This app provides a UI to create a local Couchbase Lite DB and Sync Data to the DB from a Couchbase Sync Gateway. It provides features to search for documents in the CBLite DB, selectively sync certain channels and supports both Pull and Push replication.
 
 ## Getting Started
@@ -95,6 +95,8 @@ mvn compile package
 This will create a distributable JAR file in build folder. Package an appropriate defaults.xml file along with your jar file with appropriate environments setup.  
 
 ## Features
+###### version 1.8
+* Bug fixes
 ###### version 1.7
 * Export docs from CBLite to a txt/json file
 * Minor enhancements and bug fixes
