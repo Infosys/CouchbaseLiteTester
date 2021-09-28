@@ -128,10 +128,11 @@
                         <Label fx:id="tableStatusLabel" prefWidth="200.0" textFill="WHITE" wrapText="true" />
                         <Region VBox.vgrow="ALWAYS">
                            <VBox.margin>
-                              <Insets top="20.0" />
+                              <Insets top="10.0" />
                            </VBox.margin>
                         </Region>
                         <Hyperlink fx:id="about" onAction="#openAboutPage" textFill="WHITE" />
+                        <Button fx:id="generateToken" mnemonicParsing="false" onAction="#generateSgToken" prefWidth="210.0" text="Generate SG Token..." />
                         <HBox spacing="10.0">
                            <children>
                               <Button fx:id="reloadTable" mnemonicParsing="false" onAction="#reloadTable" prefWidth="100.0" text="Reload Table" />
