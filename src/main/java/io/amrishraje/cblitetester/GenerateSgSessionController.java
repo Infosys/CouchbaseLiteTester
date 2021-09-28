@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -18,6 +21,7 @@ public class GenerateSgSessionController {
     private static final Logger logger = LoggerFactory.getLogger(GenerateSgSessionController.class);
     public TextField sgTokenUser;
     public TextField sgSessionTokenText;
+    public Label statusLabel;
     Properties properties = new Properties();
     String sgUrl, sgAdminAuth;
 
@@ -35,6 +39,7 @@ public class GenerateSgSessionController {
     }
 
     public void callSgSessionApi(ActionEvent event) {
+        statusLabel.setText("");
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
@@ -52,6 +57,10 @@ public class GenerateSgSessionController {
             JsonObject responseJson = gson.fromJson(response.body().string(), JsonObject.class);
             if (response.isSuccessful()) {
                 sgSessionTokenText.setText(responseJson.get("session_id").getAsString());
+                Toolkit.getDefaultToolkit()
+                        .getSystemClipboard()
+                        .setContents(new StringSelection(responseJson.get("session_id").getAsString()),null);
+                statusLabel.setText("Copied to clipboard");
             } else {
                 sgSessionTokenText.setText(responseJson.get("reason").getAsString());
             }

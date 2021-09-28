@@ -42,21 +42,36 @@
             <children>
             <VBox spacing="8.0">
                <children>
-                      <Label fx:id="searchStatusLabel" prefWidth="600.0" text="Please ensure that SG admin URL is specified in Settings &gt; SG Admin URL field&#10;Refer to documentation on best practices for exposing SG Admin API outside the VM&#10;Tip: Credentials for SG Admin API can be specificed in config.xml file. See documentation" textFill="#615f6fe8" wrapText="true">
+                      <Label fx:id="searchStatusLabel" prefWidth="500.0" text="Please ensure that SG admin URL is specified in Settings &gt; SG Admin URL field&#10;Refer to documentation on best practices for exposing SG Admin API outside the VM&#10;Tip: Credentials for SG Admin API can be specificed in config.xml file. See documentation" textFill="#615f6fe8" wrapText="true">
                           <font>
                               <Font name="System Italic" size="12.0" />
                           </font>
                       </Label>
                   <HBox spacing="10.0">
                      <children>
-                        <TextField fx:id="sgTokenUser" promptText="SG User" />
+                        <TextField fx:id="sgTokenUser" onAction="#callSgSessionApi" promptText="SG User" />
                         <Button fx:id="getToken" mnemonicParsing="false" onAction="#callSgSessionApi" text="Generate SG Session Token" />
                      </children>
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
                   </HBox>
-                  <TextField fx:id="sgSessionTokenText" promptText="SG Token" />
+                  <HBox spacing="5.0">
+                     <children>
+                        <TextField fx:id="sgSessionTokenText" maxWidth="320.0" prefWidth="320.0" promptText="SG Token" />
+                        <Label fx:id="statusLabel" textAlignment="CENTER" textFill="#00000081">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <padding>
+                              <Insets top="2.0" />
+                           </padding>
+                           <font>
+                              <Font name="System Italic" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
