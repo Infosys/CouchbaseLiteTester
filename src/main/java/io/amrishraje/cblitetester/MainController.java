@@ -199,7 +199,6 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         readProperties();
-        version = properties.getProperty("version", "v1.9+");
         readDefaults();
         SyncController.createLocalCBLiteFile();
         populateTable(false);
