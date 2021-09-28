@@ -21,7 +21,6 @@ import com.google.gson.JsonSyntaxException;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
-import javafx.concurrent.Task;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +88,7 @@ public class SyncController {
         logger.debug("CbLite file has been created and database has been initialized");
     }
 
-    public static void startReplicator(String user, String pwd, boolean isContinuous, List<String> channels, String replicationMode, MainController controller) {
+    public static void startReplicator(String user, String pwd, String sessionToken, boolean isContinuous, List<String> channels, String replicationMode, MainController controller) {
         logger.debug("calling startReplicator");
         logger.debug("syncing channels: " + channels);
         mainController = controller;
@@ -148,9 +147,15 @@ public class SyncController {
         }
 //end cert pinning
         // Add authentication.
-        replicatorConfig.setAuthenticator(new BasicAuthenticator(user, pwd));
-//        TODO support session based auth in future
-//        replicatorConfig.setAuthenticator(new SessionAuthenticator("00ee4a2fca27d65061f509f89c758e00a4ca83cf"));
+        if (sessionToken.isBlank()) {
+            logger.info("Password is: {}", pwd);
+            replicatorConfig.setAuthenticator(new BasicAuthenticator(user, pwd));
+        }
+        else {
+            logger.info("Session Token is: {}", sessionToken);
+            replicatorConfig.setAuthenticator(new SessionAuthenticator(sessionToken));
+        }
+
         replicator = new Replicator(replicatorConfig);
         //Add Change listener to check for errors
         replicator.addChangeListener(change -> {

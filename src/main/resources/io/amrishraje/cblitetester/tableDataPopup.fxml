@@ -56,7 +56,7 @@
             </AnchorPane>
             <AnchorPane prefHeight="45.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <TextField fx:id="docIdLabel" editable="false" focusTraversable="false" layoutX="14.0" layoutY="10.0" prefHeight="26.0" prefWidth="175.0" style="-fx-background-color: transparent; -fx-background-insets: 0px;" AnchorPane.leftAnchor="0.0">
+                  <TextField fx:id="docIdLabel" editable="false" focusTraversable="false" layoutX="14.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefWidth="350.0" style="-fx-background-color: transparent; -fx-background-insets: 0px;" AnchorPane.leftAnchor="0.0">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

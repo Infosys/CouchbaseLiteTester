@@ -58,7 +58,7 @@
                   <Font name="System Italic" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="docIdText" layoutX="102.0" layoutY="11.0" promptText="Document ID" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            <TextField fx:id="docIdText" layoutX="102.0" layoutY="11.0" maxWidth="1.7976931348623157E308" prefWidth="300.0" promptText="Document ID" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
          </children>
       </AnchorPane>
    </children>

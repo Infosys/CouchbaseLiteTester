@@ -93,6 +93,7 @@ public class MainController implements Initializable {
     public AnchorPane progressAnchorPane;
     public Label docCountLabel;
     public AnchorPane docCountAnchorPane;
+    public PasswordField sessionTokenText;
     Properties properties = new Properties();
     Properties defaults = new Properties();
     @FXML
@@ -102,10 +103,12 @@ public class MainController implements Initializable {
     private Map<String, String> cbLiteDataMap;
     private String user = "";
     private String pwd;
+    @FXML
+    private String sessionToken = null;
     private boolean channelsSet;
     private String currentEnvironment = "";
     private ObservableList<Map.Entry<String, String>> items;
-    private String version = "v1.6";
+    private String version = "v1.9";
 
 
     private FilteredList<Map.Entry<String, String>> filteredData;
@@ -163,9 +166,17 @@ public class MainController implements Initializable {
         logger.info("Starting sync");
         String localUser = userText.getText();
         pwd = pwdText.getText();
-        if (localUser.isBlank() || pwd.isBlank()) {
-            statusLabel.setText("Username and password cannot be blank!");
-            return;
+        sessionToken = sessionTokenText.getText();
+        if (sessionToken.isBlank()) {
+            if (localUser.isBlank() || pwd.isBlank()) {
+                statusLabel.setText("Enter username and password or SG Session token");
+                return;
+            }
+        } else {
+            if (!pwd.isBlank()) {
+                statusLabel.setText("Use either SG Session token or Username/ Password");
+                return;
+            }
         }
         if (!localUser.equals(user) && !user.equals("")) {
             statusLabel.setText("User changed. Initialize DB first and then Sync");
@@ -176,7 +187,7 @@ public class MainController implements Initializable {
         String replMode = replicationMode.getValue() == null ? "Pull" : replicationMode.getValue().toString();
         if (!SyncController.isReplicatorStarted) {
             logger.debug("Starting Sync for the first time using startReplicator");
-            SyncController.startReplicator(localUser, pwd, continuousToggle.isSelected(), channels, replMode, this);
+            SyncController.startReplicator(localUser, pwd, sessionToken, continuousToggle.isSelected(), channels, replMode, this);
         } else {
             logger.debug("On demand sync requested");
             SyncController.onDemandSync(continuousToggle.isSelected(), channels, replMode);
@@ -188,7 +199,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         readProperties();
-        version = properties.getProperty("version", "v1.7+");
+        version = properties.getProperty("version", "v1.9+");
         readDefaults();
         SyncController.createLocalCBLiteFile();
         populateTable(false);
