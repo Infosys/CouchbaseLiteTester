@@ -108,7 +108,7 @@ public class MainController implements Initializable {
     private boolean channelsSet;
     private String currentEnvironment = "";
     private ObservableList<Map.Entry<String, String>> items;
-    private String version = "v1.9";
+    private String version = "v1.10";
 
 
     private FilteredList<Map.Entry<String, String>> filteredData;
