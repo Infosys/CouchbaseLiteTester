@@ -97,6 +97,7 @@ This will create a distributable JAR file in build folder. Package an appropriat
 ## Features
 ###### version 1.10
 * Support for Generating Sync Gateway Session Token
+* Upgraded CBL library to version 2.8.4 CE
 ###### version 1.9
 * Support for Sync Gateway Session Token authentication
 * Bug fixes
