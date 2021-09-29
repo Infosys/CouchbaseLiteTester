@@ -52,7 +52,7 @@
                                     <TextField fx:id="userText" onAction="#startSync" onMouseClicked="#resetChannels" promptText="User" />
                                     <PasswordField fx:id="pwdText" onAction="#startSync" promptText="Password" />
                                     <Label alignment="CENTER" contentDisplay="CENTER" text="OR" textAlignment="CENTER" textFill="WHITE" />
-                                    <PasswordField fx:id="sessionTokenText" promptText="SG Session Token">
+                                    <PasswordField fx:id="sessionTokenText" onAction="#startSync" promptText="SG Session Token">
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin>
@@ -160,27 +160,38 @@
                <tooltip>
                   <Tooltip text="Click on a row to view and edit the document" />
                </tooltip></TableView>
-            <AnchorPane fx:id="tableAnchorPane" layoutX="252.0" layoutY="634.0" prefHeight="42.0" prefWidth="650.0" style="-fx-background-color: #888888; -fx-border-color: #777777;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
+            <AnchorPane fx:id="tableAnchorPane" layoutX="252.0" layoutY="634.0" prefHeight="42.0" style="-fx-background-color: #888888; -fx-border-color: #777777;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0">
                <children>
-                  <TextField fx:id="tableSearchText" layoutX="202.0" layoutY="9.0" prefHeight="26.0" prefWidth="139.0" promptText="Search by Doc Id" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="120.0" />
-                  <Label layoutX="14.0" layoutY="13.0" prefHeight="42.0" prefWidth="63.0" text="Load Full Document" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="13.0">
-                     <tooltip>
-                        <Tooltip text="Loading all documents may take a few moments depending on size of data" />
-                     </tooltip>
-                  </Label>
-                  <ToggleSwitch fx:id="loadFullDocSwitch" layoutX="77.0" layoutY="14.0" onMouseClicked="#loadFullDocument" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="60.0" />
-                  <Button fx:id="addDocButton" layoutX="415.0" layoutY="10.0" mnemonicParsing="false" onAction="#addDocument" text="Add Document" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="470.0" />
-                  <Button fx:id="resetSearchButton" mnemonicParsing="false" onAction="#resetSearch" text="Reset Search" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="265.0" />
-                  <Button fx:id="advanceSearchButton" layoutX="467.0" layoutY="10.0" mnemonicParsing="false" onAction="#advanceSearch" text="Advance Search..." AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="355.0" />
-                  <MenuBar fx:id="menuBarMore" layoutX="579.0" layoutY="11.0" prefHeight="18.0" prefWidth="63.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="578.0">
-                    <menus>
-                      <Menu fx:id="menuMore" mnemonicParsing="false" text="More">
-                        <items>
-                          <MenuItem id="exportDocs" fx:id="exportDocs" mnemonicParsing="false" onAction="#exportDocuments" text="Export Docs" />
-                        </items>
-                      </Menu>
-                    </menus>
-                  </MenuBar>
+                  <HBox spacing="5.0">
+                     <children>
+                        <AnchorPane>
+                           <children>
+                              <Label layoutY="-1.0" maxWidth="60.0" text="Load Full Document" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                 <tooltip>
+                                    <Tooltip text="Loading all documents may take a few moments depending on size of data" />
+                                 </tooltip>
+                              </Label>
+                              <ToggleSwitch fx:id="loadFullDocSwitch" layoutX="42.0" layoutY="5.0" onMouseClicked="#loadFullDocument" textFill="WHITE" />
+                           </children>
+                        </AnchorPane>
+                        <TextField fx:id="tableSearchText" promptText="Search by Doc Id" />
+                        <Button fx:id="resetSearchButton" mnemonicParsing="false" onAction="#resetSearch" text="Reset Search" />
+                        <Button fx:id="advanceSearchButton" mnemonicParsing="false" onAction="#advanceSearch" text="Advance Search..." />
+                        <Button fx:id="addDocButton" mnemonicParsing="false" onAction="#addDocument" text="Add Document" />
+                        <MenuBar fx:id="menuBarMore" prefHeight="18.0" prefWidth="63.0">
+                          <menus>
+                            <Menu fx:id="menuMore" mnemonicParsing="false" text="More">
+                              <items>
+                                <MenuItem id="exportDocs" fx:id="exportDocs" mnemonicParsing="false" onAction="#exportDocuments" text="Export Docs" />
+                              </items>
+                            </Menu>
+                          </menus>
+                        </MenuBar>
+                     </children>
+                     <padding>
+                        <Insets left="5.0" right="5.0" top="10.0" />
+                     </padding>
+                  </HBox>
                </children>
             </AnchorPane>
             <AnchorPane fx:id="progressAnchorPane" layoutX="300.0" layoutY="458.0" prefHeight="42.0" prefWidth="400.0" style="-fx-background-color: #999999;" visible="false" AnchorPane.bottomAnchor="100.0" AnchorPane.rightAnchor="150.0">
