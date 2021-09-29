@@ -108,7 +108,7 @@ public class MainController implements Initializable {
     private boolean channelsSet;
     private String currentEnvironment = "";
     private ObservableList<Map.Entry<String, String>> items;
-    private String version = "v1.9";
+    private String version = "v1.10";
 
 
     private FilteredList<Map.Entry<String, String>> filteredData;
@@ -641,5 +641,19 @@ public class MainController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("JSON Files", "*.txt", "*.json"));
         return fileChooser.showSaveDialog(null);
+    }
+
+    @FXML
+    public void generateSgToken(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SgSessionToken.fxml"));
+            Parent dataRoot = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Generate SG Session Token");
+            stage.setScene(new Scene(dataRoot));
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error loading SgSessionToken.fxml", e);
+        }
     }
 }
