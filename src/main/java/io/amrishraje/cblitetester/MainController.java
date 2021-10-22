@@ -108,7 +108,7 @@ public class MainController implements Initializable {
     private boolean channelsSet;
     private String currentEnvironment = "";
     private ObservableList<Map.Entry<String, String>> items;
-    private String version = "v1.10";
+    private String version = "v1.10.2";
 
 
     private FilteredList<Map.Entry<String, String>> filteredData;
@@ -430,30 +430,36 @@ public class MainController implements Initializable {
         String adminUrl = properties.getProperty("sgAdminURL") + "/"
                 + properties.getProperty("sgDB") + "/_user/"
                 + userText.getText();
-        Request request = new Request.Builder()
-                .url(adminUrl)
-                .method("GET", null)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-//                    TODO provide a way to authenticate against SG admin url. Currently there is no UI to get pwd
-                .addHeader("Authorization", properties.getProperty("sgAdminAuth", "Basic something"))
-                .build();
+        Request request;
+        String sgAdminAuth = properties.getProperty("sgAdminAuth");
+        if (sgAdminAuth == null || sgAdminAuth.isEmpty()) {
+            request = new Request.Builder()
+                    .url(adminUrl)
+                    .method("GET", null)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build();
+        } else {
+            request = new Request.Builder()
+                    .url(adminUrl)
+                    .method("GET", null)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+// TODO provide a way to authenticate against SG admin url. Currently there is no UI to get pwd
+                    .addHeader("Authorization", properties.getProperty("sgAdminAuth", "Basic something"))
+                    .build();
+        }
         try {
             Response response = client.newCall(request).execute();
-            JsonObject responseJson = gson.fromJson(response.body().string(), JsonObject.class);
             if (response.isSuccessful()) {
+                JsonObject responseJson = gson.fromJson(response.body().string(), JsonObject.class);
                 channelsComboBoxList.getItems().clear();
                 channelsComboBoxList.getItems().add("Click to add...");
                 responseJson.get("all_channels").getAsJsonArray().iterator().forEachRemaining(jsonElement -> {
                     channelsComboBoxList.getItems().add(jsonElement.getAsString());
                 });
             } else {
-                if (response.code() == 404 && responseJson.get("reason").getAsString().equals("missing")) {
-                    logger.info("User not found");
-                } else {
-                    logger.error("Call to _user API failed");
-                    logger.error("Response: " + response);
-                }
+                logger.info("Couldn't fetch channels: {}", response.message());
             }
             response.close();
         } catch (IOException e) {

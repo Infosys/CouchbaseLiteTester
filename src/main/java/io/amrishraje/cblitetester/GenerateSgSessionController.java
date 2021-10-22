@@ -23,7 +23,7 @@ public class GenerateSgSessionController {
     public TextField sgSessionTokenText;
     public Label statusLabel;
     Properties properties = new Properties();
-    String sgUrl, sgAdminAuth;
+    String sgUrl, sgAdminAuth, sgDB;
 
     @FXML
     void initialize() {
@@ -31,6 +31,7 @@ public class GenerateSgSessionController {
         try {
             properties.loadFromXML(new FileInputStream("config.xml"));
             sgUrl = properties.getProperty("sgAdminURL");
+            sgDB = properties.getProperty("sgDB");
             sgAdminAuth = properties.getProperty("sgAdminAuth");
             logger.info("SG URL is: {}", sgUrl);
         } catch (IOException e) {
@@ -43,26 +44,39 @@ public class GenerateSgSessionController {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"name\": \"" +  sgTokenUser.getText() + "\"\n}");
-        Request request = new Request.Builder()
-                .url(sgUrl + "/syncdb/_session")
-                .method("POST", body)
-                .addHeader("Accept", "application/json")
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", sgAdminAuth)
-                .build();
+        RequestBody body = RequestBody.create(mediaType, "{\"name\": \"" + sgTokenUser.getText() + "\"\n}");
+        Request request;
+
+        if (sgAdminAuth == null || sgAdminAuth.isBlank() || sgAdminAuth.isEmpty()) {
+            request = new Request.Builder()
+                    .url(sgUrl + "/" + sgDB + "/_session")
+                    .method("POST", body)
+                    .addHeader("Accept", "application/json")
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+        } else {
+            request = new Request.Builder()
+                    .url(sgUrl + "/" + sgDB + "/_session")
+                    .method("POST", body)
+                    .addHeader("Accept", "application/json")
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", sgAdminAuth)
+                    .build();
+        }
         Gson gson = new Gson();
         try {
             Response response = client.newCall(request).execute();
-            JsonObject responseJson = gson.fromJson(response.body().string(), JsonObject.class);
+            JsonObject responseJson;
             if (response.isSuccessful()) {
+                responseJson = gson.fromJson(response.body().string(), JsonObject.class);
                 sgSessionTokenText.setText(responseJson.get("session_id").getAsString());
                 Toolkit.getDefaultToolkit()
                         .getSystemClipboard()
-                        .setContents(new StringSelection(responseJson.get("session_id").getAsString()),null);
+                        .setContents(new StringSelection(responseJson.get("session_id").getAsString()), null);
                 statusLabel.setText("Copied to clipboard");
             } else {
-                sgSessionTokenText.setText(responseJson.get("reason").getAsString());
+                sgSessionTokenText.setText(response.message());
+                logger.info("Sg Response: {}", response);
             }
         } catch (IOException e) {
             e.printStackTrace();
